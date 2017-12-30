@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { RaisedButton } from 'material-ui';
 import _ from 'lodash';
+import {
+  RaisedButton,
+  Table,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+} from 'material-ui';
 import apiActions from '../../redux/api';
 import bittrexActions from '../../redux/bittrex';
 
@@ -21,6 +27,14 @@ class BittrexResults extends React.Component {
 
     this.state = {
       summaries: '',
+      height: '500px',
+      fixedHeader: true,
+      fixedFooter: true,
+      selectable: false,
+      multiSelectable: false,
+      showCheckboxes: false,
+      adjustForCheckbox: false,
+      enableSelectAll: false,
     };
   }
 
@@ -37,6 +51,11 @@ class BittrexResults extends React.Component {
     this.props.getMarketSummaries();
   };
 
+  renderMarketSummaries = (summaries) =>
+  summaries.map(({}) => {
+
+  })
+
   render() {
     return (
       <div>
@@ -46,7 +65,22 @@ class BittrexResults extends React.Component {
           type={'button'}
           onClick={this.getMarketSummaries}
         />
-        {this.state.summaries}
+        <br/>
+        <Table
+          height={this.state.height}
+          fixedHeader={this.state.fixedHeader}
+          fixedFooter={this.state.fixedFooter}
+          selectable={this.state.selectable}
+          multiSelectable={this.state.multiSelectable}
+        >
+          <TableHeader
+            displaySelectAll={this.state.showCheckboxes}
+            adjustForCheckbox={this.state.showCheckboxes}
+            enableSelectAll={this.state.enableSelectAll}
+          >
+            {JSON.stringify(this.state.summaries)}
+          </TableHeader>
+        </Table>
       </div>
     );
   }
@@ -54,7 +88,7 @@ class BittrexResults extends React.Component {
 
 export default connect(
   ({ bittrex, api }) => ({
-    summaries: bittrex.summaries,
+    summaries: bittrex,
     apiStatus: api,
   }),
   dispatch => ({
