@@ -2,7 +2,7 @@
 Full-Stack REACT & Redux App - Created: 29 December 2017
 
 ## DESCRIPTION:
-Diversify a BTC or ETH deposit across 100 alt-coins and storing all coins on a Cold Storage Wallet (Nano Ledger S).
+Diversify a BTC or ETH deposit across 100 alt-coins and store all coins on a Cold Storage Wallet (Nano Ledger S).
 - Features
   * Programatically distribute any BTC or ETH sized deposit across 100 selected alt-coins/tokens.
   * "Rebalance" Portfolio after increasing portfolio % for specific coin.
