@@ -84,20 +84,41 @@ class BittrexResults extends React.Component {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              <TableHeaderColumn colSpan="3" tooltip="Bittrex Markets" style={{ textAlign: 'center' }}>
+              <TableHeaderColumn
+                colSpan="3"
+                tooltip="Bittrex Markets"
+                style={{
+                  textAlign: 'center',
+                  color: '#FFF',
+                }}
+              >
                 Bittrex Market Summaries
               </TableHeaderColumn>
             </TableRow>
             <TableRow>
-              <TableHeaderColumn tooltip="#">#</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+              <TableHeaderColumn tooltip="#" style={{
+                color: '#0097a7',
+              }}>#</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Name" style={{
+                color: '#0097a7',
+              }}>Name</TableHeaderColumn>
               {/* <TableHeaderColumn tooltip="High">High</TableHeaderColumn> */}
               {/* <TableHeaderColumn tooltip="Low">Low</TableHeaderColumn> */}
-              <TableHeaderColumn tooltip="Volume">Volume</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Price">Price</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Open Buy">Open Buy</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Open Sell">Open Sell</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Time Stamp">Time Stamp</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Volume" style={{
+                color: '#0097a7',
+              }}>Volume</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Price" style={{
+                color: '#0097a7',
+              }}>Price</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Open Buy" style={{
+                color: '#0097a7',
+              }}>Open Buy</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Open Sell" style={{
+                color: '#0097a7',
+              }}>Open Sell</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Time Stamp" style={{
+                color: '#0097a7',
+              }}>Time Stamp</TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody
