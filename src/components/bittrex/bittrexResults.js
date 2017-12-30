@@ -33,13 +33,13 @@ class BittrexResults extends React.Component {
       height: '500px',
       fixedHeader: true,
       fixedFooter: true,
-      selectable: false,
-      multiSelectable: false,
-      showCheckboxes: false,
+      selectable: true,
+      multiSelectable: true,
+      showCheckboxes: true,
       enableSelectAll: false,
       deselectOnClickaway: true,
-      showRowHover: true,
-      stripedRows: false,
+      showRowHover: false,
+      stripedRows: true,
     };
   }
 
@@ -84,14 +84,20 @@ class BittrexResults extends React.Component {
             enableSelectAll={this.state.enableSelectAll}
           >
             <TableRow>
-              <TableHeaderColumn colSpan="3" tooltip="Super Header" style={{ textAlign: 'center' }}>
-                Market Summaries
+              <TableHeaderColumn colSpan="3" tooltip="Bittrex Markets" style={{ textAlign: 'center' }}>
+                Bittrex Market Summaries
               </TableHeaderColumn>
             </TableRow>
             <TableRow>
-              <TableHeaderColumn tooltip="Currency">Currency</TableHeaderColumn>
-              <TableHeaderColumn tooltip="x">x</TableHeaderColumn>
-              <TableHeaderColumn tooltip="y">y</TableHeaderColumn>
+              <TableHeaderColumn tooltip="#">#</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+              {/* <TableHeaderColumn tooltip="High">High</TableHeaderColumn> */}
+              {/* <TableHeaderColumn tooltip="Low">Low</TableHeaderColumn> */}
+              <TableHeaderColumn tooltip="Volume">Volume</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Price">Price</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Open Buy">Open Buy</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Open Sell">Open Sell</TableHeaderColumn>
+              <TableHeaderColumn tooltip="Time Stamp">Time Stamp</TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody
@@ -113,29 +119,34 @@ class BittrexResults extends React.Component {
               OpenBuyOrders,
               OpenSellOrders,
             }, i) =>
-              <TableRow key={i}>
+              <TableRow key={MarketName}>
                 <TableRowColumn>{i + 1}</TableRowColumn>
                 <TableRowColumn>{MarketName}</TableRowColumn>
-                <TableRowColumn>{High}</TableRowColumn>
-                <TableRowColumn>{Low}</TableRowColumn>
+                {/* <TableRowColumn>{High}</TableRowColumn> */}
+                {/* <TableRowColumn>{Low}</TableRowColumn> */}
                 <TableRowColumn>{Volume}</TableRowColumn>
-                <TableRowColumn>{TimeStamp}</TableRowColumn>
-                <TableRowColumn>{Bid}</TableRowColumn>
-                <TableRowColumn>{Ask}</TableRowColumn>
+                <TableRowColumn>{(Bid + Ask) / 2}</TableRowColumn>
                 <TableRowColumn>{OpenBuyOrders}</TableRowColumn>
                 <TableRowColumn>{OpenSellOrders}</TableRowColumn>
+                <TableRowColumn>{TimeStamp}</TableRowColumn>
               </TableRow>
             )}
           </TableBody>
           <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
             <TableRow>
-              <TableRowColumn>ID</TableRowColumn>
-              <TableRowColumn>Name</TableRowColumn>
-              <TableRowColumn>Status</TableRowColumn>
+              <TableHeaderColumn >#</TableHeaderColumn>
+              <TableHeaderColumn >Name</TableHeaderColumn>
+              {/* <TableHeaderColumn >High</TableHeaderColumn> */}
+              {/* <TableHeaderColumn >Low</TableHeaderColumn> */}
+              <TableHeaderColumn >Volume</TableHeaderColumn>
+              <TableHeaderColumn >Price</TableHeaderColumn>
+              <TableHeaderColumn >Open Buy</TableHeaderColumn>
+              <TableHeaderColumn >Open Sell</TableHeaderColumn>
+              <TableHeaderColumn >Time Stamp</TableHeaderColumn>
             </TableRow>
             <TableRow>
               <TableRowColumn colSpan="3" style={{ textAlign: 'center' }}>
-                Market Summaries
+                Bittrex Market Summaries
               </TableRowColumn>
             </TableRow>
           </TableFooter>
