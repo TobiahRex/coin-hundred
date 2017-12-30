@@ -6,6 +6,7 @@ import thingActions from '../../redux/thing';
 import apiActions from '../../redux/api';
 import ThingList from '../../components/thingList/';
 import InputNewThing from '../../components/inputNewThing/';
+import BittrexResult from '../../components/bittrex/bittrexResults';
 
 const Things = ({ fetching, createThing, editThing, removeThing, things, apiStatus }) => {
   const propsThingList = {
@@ -28,6 +29,7 @@ const Things = ({ fetching, createThing, editThing, removeThing, things, apiStat
       </CardHeader>
       <CardText>
         <ThingList {...propsThingList} />
+        <BittrexResult />
       </CardText>
     </Card>
   );
