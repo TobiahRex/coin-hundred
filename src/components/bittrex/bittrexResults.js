@@ -93,34 +93,53 @@ class BittrexResults extends React.Component {
               <TableHeaderColumn tooltip="x">x</TableHeaderColumn>
               <TableHeaderColumn tooltip="y">y</TableHeaderColumn>
             </TableRow>
-            <TableBody
-              displayRowCheckbox={this.state.showCheckboxes}
-              deselectOnClickaway={this.state.deselectOnClickaway}
-              showRowHover={this.state.showRowHover}
-              stripedRows={this.state.stripedRows}
-            >
-              {this.state.summaries.length && this.state.summaries.map((a, i) =>
-                <TableRow key={i}>
-                  <TableRowColumn>{i}</TableRowColumn>
-                  {/* <TableRowColumn></TableRowColumn>
-                  <TableRowColumn></TableRowColumn> */}
-                </TableRow>
-              )}
-            </TableBody>
-            <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
-              <TableRow>
-                <TableRowColumn>ID</TableRowColumn>
-                <TableRowColumn>Name</TableRowColumn>
-                <TableRowColumn>Status</TableRowColumn>
-              </TableRow>
-              <TableRow>
-                <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-                  Market Summaries
-                </TableRowColumn>
-              </TableRow>
-            </TableFooter>
-            {/* {JSON.stringify(this.state.summaries)} */}
           </TableHeader>
+          <TableBody
+            displayRowCheckbox={this.state.showCheckboxes}
+            deselectOnClickaway={this.state.deselectOnClickaway}
+            showRowHover={this.state.showRowHover}
+            stripedRows={this.state.stripedRows}
+          >
+            {this.state.summaries.length && this.state.summaries.map(({
+              MarketName,
+              High,
+              Low,
+              Volume,
+              Last,
+              BaseVolume,
+              TimeStamp,
+              Bid,
+              Ask,
+              OpenBuyOrders,
+              OpenSellOrders,
+            }, i) =>
+              <TableRow key={i}>
+                <TableRowColumn>{i + 1}</TableRowColumn>
+                <TableRowColumn>{MarketName}</TableRowColumn>
+                <TableRowColumn>{High}</TableRowColumn>
+                <TableRowColumn>{Low}</TableRowColumn>
+                <TableRowColumn>{Volume}</TableRowColumn>
+                <TableRowColumn>{TimeStamp}</TableRowColumn>
+                <TableRowColumn>{Bid}</TableRowColumn>
+                <TableRowColumn>{Ask}</TableRowColumn>
+                <TableRowColumn>{OpenBuyOrders}</TableRowColumn>
+                <TableRowColumn>{OpenSellOrders}</TableRowColumn>
+              </TableRow>
+            )}
+          </TableBody>
+          <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
+            <TableRow>
+              <TableRowColumn>ID</TableRowColumn>
+              <TableRowColumn>Name</TableRowColumn>
+              <TableRowColumn>Status</TableRowColumn>
+            </TableRow>
+            <TableRow>
+              <TableRowColumn colSpan="3" style={{ textAlign: 'center' }}>
+                Market Summaries
+              </TableRowColumn>
+            </TableRow>
+          </TableFooter>
+          {/* {JSON.stringify(this.state.summaries)} */}
         </Table>
       </div>
     );
