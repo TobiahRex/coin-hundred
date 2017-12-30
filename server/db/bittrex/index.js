@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bittrexApi from 'node-bittrex-api';
+console.log('%cbittrexApi', 'background:red;', bittrexApi);
 
 bittrexApi.options({
   apikey: process.env.BITTREX_API_KEY,
@@ -12,7 +13,7 @@ const bittrexSchema = new mongoose.Schema({
 });
 
 bittrexSchema.statics.getMarketSummaries = (cb) => {
-  bittrexApi.getMarketSummaries((err, data) => {
+  bittrexApi.getmarketsummaries((err, data) => {
     if (err) {
       console.log('error: ', err);
       cb(err);
