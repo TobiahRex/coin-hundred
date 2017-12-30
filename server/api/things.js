@@ -1,5 +1,5 @@
 import express from 'express';
-import Thing from '../db/Thing';
+import Thing from '../db/things';
 
 const router = new express.Router();
 
