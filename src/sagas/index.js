@@ -1,5 +1,5 @@
 import { takeLatest, all } from 'redux-saga/effects';
-import API from '../services/API';
+import thingAPI from '../services/things';
 
 // ----- Sagas ----- //
 import GetAllThings from './thing/getAllThings';
@@ -10,7 +10,7 @@ import RemoveThing from './thing/removeThing';
 // ----- Types ----- //
 import { ThingTypes } from '../redux/thing';
 
-const api = API.createAPI();
+const api = thingAPI.createAPI();
 
 export default function* rootSaga() {
   yield all([
