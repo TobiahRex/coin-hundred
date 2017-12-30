@@ -58,5 +58,3 @@ Diversify any sized BTC or ETH deposit across 100 alt-coins and store all coins 
   - Project Genesis date.
 
 ## ScreenShots:
-* Terminal
-  - <img src="http://i.imgur.com/RjJ7yfA.png" />
