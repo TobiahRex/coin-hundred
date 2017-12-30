@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { RaisedButton } from 'material-ui';
 import _ from 'lodash';
+import apiActions from '../../redux/api';
+import bittrexActions from '../../redux/bittrex';
 
 class BittrexResults extends React.Component {
   static propTypes = {
@@ -43,9 +46,13 @@ class BittrexResults extends React.Component {
   }
 }
 
-const mapStateToProps = ({ bittrex, api }) => ({
-  summaries: bittrex.summaries,
-  apiStatus: api,
-})
-
-export default BittrexResults;
+export default connect(
+  ({ bittrex, api }) => ({
+    summaries: bittrex.summaries,
+    apiStatus: api,
+  }),
+  dispatch => ({
+    fetching: () => dispatch(apiActions.fetching()),
+    getMarketSummaries: () => dispatch(bittrexActions.getMarketSummaries()),
+  }),
+)(BittrexResults);

@@ -7,12 +7,14 @@ import rootSaga from '../sagas/';
 
 import { thingReducer as things } from '../redux/thing/';
 import { apiReducer as api } from '../redux/api/';
+import { bittrexReducer as bittrex } from '../redux/bittrex';
 
 export default () => {
   const rootReducer = combineReducers({
     api,
     things,
     routing,
+    bittrex,
   });
 
   return configureStore(rootReducer, rootSaga);
