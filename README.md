@@ -1,5 +1,5 @@
 # _CoinHundred:_ [DEMO](https://coinhundred.com/)
-Full-Stack REACT & Redux - Created: 29 December 2017
+Full-Stack REACT & Redux App - Created: 29 December 2017
 
 ## DESCRIPTION:
 Diversify a BTC or ETH deposit across 100 alt-coins and storing all coins on a Cold Storage Wallet (Nano Ledger S).
