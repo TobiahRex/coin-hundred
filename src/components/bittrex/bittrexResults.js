@@ -6,21 +6,22 @@ import _ from 'lodash';
 class BittrexResults extends React.Component {
   static propTypes = {
     getMarketSummaries: PropTypes.func.isRequired,
-    results: PropTypes.objectOf(PropTypes.any),
+    summaries: PropTypes.objectOf(PropTypes.any),
+    apiStatus: PropTypes.objectOf(PropTypes.any),
   }
 
   constructor(props) {
     super(props);
 
     this.state = {
-      results: '',
+      summaries: '',
     };
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (!_.isEqual(nextProps.results, this.props.results)) {
+    if (!_.isEqual(nextProps.summaries, this.props.summaries)) {
       this.setState(() => ({
-        results: nextProps.results,
+        summaries: nextProps.summaries,
       }));
     }
   }
@@ -36,10 +37,15 @@ class BittrexResults extends React.Component {
           type={'button'}
           onClick={this.getMarketSummaries}
         />
-        {this.state.results}
+        {this.state.summaries}
       </div>
     );
   }
 }
+
+const mapStateToProps = ({ bittrex, api }) => ({
+  summaries: bittrex.summaries,
+  apiStatus: api,
+})
 
 export default BittrexResults;
