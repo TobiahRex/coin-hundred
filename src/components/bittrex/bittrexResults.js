@@ -8,16 +8,19 @@ import {
   TableHeader,
   TableHeaderColumn,
   TableRow,
+  TableBody,
+  TableFooter,
+  TableRowColumn,
 } from 'material-ui';
 import apiActions from '../../redux/api';
 import bittrexActions from '../../redux/bittrex';
 
-const { objectOf, any, func } = PropTypes;
+const { objectOf, any, func, arrayOf } = PropTypes;
 
 class BittrexResults extends React.Component {
   static propTypes = {
     getMarketSummaries: func.isRequired,
-    summaries: objectOf(any),
+    summaries: arrayOf(any),
     apiStatus: objectOf(any),
     fetching: func.isRequired,
   }
@@ -33,8 +36,10 @@ class BittrexResults extends React.Component {
       selectable: false,
       multiSelectable: false,
       showCheckboxes: false,
-      adjustForCheckbox: false,
       enableSelectAll: false,
+      deselectOnClickaway: true,
+      showRowHover: true,
+      stripedRows: false,
     };
   }
 
@@ -51,10 +56,10 @@ class BittrexResults extends React.Component {
     this.props.getMarketSummaries();
   };
 
-  renderMarketSummaries = (summaries) =>
-  summaries.map(({}) => {
-
-  })
+  // renderMarketSummaries = (summaries) =>
+  // summaries.map(({}) => {
+  //
+  // })
 
   render() {
     return (
@@ -65,7 +70,7 @@ class BittrexResults extends React.Component {
           type={'button'}
           onClick={this.getMarketSummaries}
         />
-        <br/>
+        <br />
         <Table
           height={this.state.height}
           fixedHeader={this.state.fixedHeader}
@@ -78,7 +83,43 @@ class BittrexResults extends React.Component {
             adjustForCheckbox={this.state.showCheckboxes}
             enableSelectAll={this.state.enableSelectAll}
           >
-            {JSON.stringify(this.state.summaries)}
+            <TableRow>
+              <TableHeaderColumn colSpan="3" tooltip="Super Header" style={{ textAlign: 'center' }}>
+                Market Summaries
+              </TableHeaderColumn>
+            </TableRow>
+            <TableRow>
+              <TableHeaderColumn tooltip="Currency">Currency</TableHeaderColumn>
+              <TableHeaderColumn tooltip="x">x</TableHeaderColumn>
+              <TableHeaderColumn tooltip="y">y</TableHeaderColumn>
+            </TableRow>
+            <TableBody
+              displayRowCheckbox={this.state.showCheckboxes}
+              deselectOnClickaway={this.state.deselectOnClickaway}
+              showRowHover={this.state.showRowHover}
+              stripedRows={this.state.stripedRows}
+            >
+              {this.state.summaries.length && this.state.summaries.map((a, i) =>
+                <TableRow key={i}>
+                  <TableRowColumn>{i}</TableRowColumn>
+                  {/* <TableRowColumn></TableRowColumn>
+                  <TableRowColumn></TableRowColumn> */}
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
+              <TableRow>
+                <TableRowColumn>ID</TableRowColumn>
+                <TableRowColumn>Name</TableRowColumn>
+                <TableRowColumn>Status</TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
+                  Market Summaries
+                </TableRowColumn>
+              </TableRow>
+            </TableFooter>
+            {/* {JSON.stringify(this.state.summaries)} */}
           </TableHeader>
         </Table>
       </div>
