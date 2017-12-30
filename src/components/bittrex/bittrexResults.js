@@ -6,11 +6,14 @@ import _ from 'lodash';
 import apiActions from '../../redux/api';
 import bittrexActions from '../../redux/bittrex';
 
+const { objectOf, any, func } = PropTypes;
+
 class BittrexResults extends React.Component {
   static propTypes = {
-    getMarketSummaries: PropTypes.func.isRequired,
-    summaries: PropTypes.objectOf(PropTypes.any),
-    apiStatus: PropTypes.objectOf(PropTypes.any),
+    getMarketSummaries: func.isRequired,
+    summaries: objectOf(any),
+    apiStatus: objectOf(any),
+    fetching: func.isRequired,
   }
 
   constructor(props) {
@@ -29,7 +32,10 @@ class BittrexResults extends React.Component {
     }
   }
 
-  getMarketSummaries = () => this.props.getMarketSummaries();
+  getMarketSummaries = () => {
+    this.props.fetching();
+    this.props.getMarketSummaries();
+  };
 
   render() {
     return (

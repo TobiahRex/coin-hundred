@@ -13,5 +13,5 @@ export const INITIAL_STATE = immutable([]);
 const receivedMarketSummaries = (state, { summaries }) => summaries || [];
 
 export const bittrexReducer = createReducer(INITIAL_STATE, {
-  [Types.RECEIVED_MARKET_SUMMARIES]: getMarketSummaries,
+  [Types.RECEIVED_MARKET_SUMMARIES]: receivedMarketSummaries,
 });

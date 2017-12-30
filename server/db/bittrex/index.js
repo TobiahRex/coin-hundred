@@ -13,8 +13,12 @@ const bittrexSchema = new mongoose.Schema({
 
 bittrexSchema.statics.getMarketSummaries = (cb) => {
   bittrexApi.getMarketSummaries((err, data) => {
-    if (err) cb(err);
-    cb(null, data);
+    if (err) {
+      console.log('error: ', err);
+      cb(err);
+    } else {
+      cb(null, data);
+    }
   });
 };
 

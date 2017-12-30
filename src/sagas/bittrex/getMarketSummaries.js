@@ -11,6 +11,8 @@ export default function* getMarketSummaries(api) {
       put(apiActions.apiSuccess()),
     ]);
   } else {
+    alert('Could not fetch Bittrex Results');
+    console.error(response.problem);
     yield put(apiActions.apiFail(response.problem));
   }
 }
