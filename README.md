@@ -15,7 +15,6 @@ Diversify a BTC or ETH deposit across 100 alt-coins and storing all coins on a C
   * Uses _redux_sauce_ to create Types, Creators & Reducer.
   * Uses _redux-logger_ to allow for informative workflow from the devtools console.  
   * Uses _redux-devtools-extension_ to allow for a macro perspective picture of your current store's state.
-    - <img src="http://i.imgur.com/GD4VCkW.png" />
   * Airbnb Style Guide implemented.
 
 ## Setup:
