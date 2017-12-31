@@ -14,10 +14,48 @@ const bittrexSchema = new mongoose.Schema({
 });
 
 bittrexSchema.statics.getMarketSummaries = (cb) => {
-  bittrexApi.getmarketsummaries((err, data) => {
-    console.log('data: ', data);
+  const marketsMemo = {};
+
+  bittrexApi.getmarkets((err, data) => {
     if (err) cb(err);
-    else cb(null, data);
+    else {
+      data.result.forEach(({
+        MarketCurrency,
+        MarketCurrencyLong,
+        LogoUrl,
+      }) => {
+        marketsMemo[MarketCurrency] = {
+          LogoUrl,
+          MarketCurrency,
+          MarketCurrencyLong,
+        };
+      });
+
+      console.log('marketsMemo: ', marketsMemo);
+
+      bittrexApi.getmarketsummaries((err2, data2) => {
+        if (err2) cb(err2);
+        else {
+          data2.result = data2.result
+            .map(market => {
+              return ({
+                ...market,
+                MarketCurrency: marketsMemo[
+                  market.MarketName.substr(market.MarketName.length - 3)
+                ].MarketCurrency,
+                MarketCurrencyLong: marketsMemo[
+                  market.MarketName.substr(market.MarketName.length - 3)
+                ].MarketCurrencyLong,
+                LogoUrl: marketsMemo[
+                  market.MarketName.substr(market.MarketName.length - 3)
+                ].LogoUrl,
+              });
+            }
+            );
+          cb(null, data2);
+        }
+      });
+    }
   });
 };
 
