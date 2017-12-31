@@ -69,23 +69,26 @@ class BittrexResults extends React.Component {
     })
     .map(({
       MarketName,
-      High,
-      Low,
+      MarketCurrency,
+      MarketCurrencyLong,
       Volume,
-      Last,
-      BaseVolume,
       TimeStamp,
       Bid,
       Ask,
       OpenBuyOrders,
       OpenSellOrders,
+      LogoUrl,
     }, i) => (
       <TableRow key={MarketName}>
-        <TableRowColumn>{i + 1}</TableRowColumn>
+        <TableRowColumn>
+          {i + 1}
+          <br />
+          <img src={LogoUrl} alt={MarketName} style={{ maxWidth: 100 }} />
+        </TableRowColumn>
         <TableRowColumn>
           {
-            (MarketName.slice(0, 3) === 'BTC') ?
-            MarketName.slice(4) :
+            MarketName.split('-')[0] === 'BTC' ?
+            `${MarketCurrencyLong} (${MarketCurrency})}` :
             MarketName
           }
         </TableRowColumn>
