@@ -31,27 +31,22 @@ bittrexSchema.statics.getMarketSummaries = (cb) => {
         };
       });
 
-      console.log('marketsMemo: ', marketsMemo);
-
       bittrexApi.getmarketsummaries((err2, data2) => {
         if (err2) cb(err2);
         else {
           data2.result = data2.result
-            .map(market => {
-              return ({
-                ...market,
-                MarketCurrency: marketsMemo[
-                  market.MarketName.substr(market.MarketName.length - 3)
-                ].MarketCurrency,
-                MarketCurrencyLong: marketsMemo[
-                  market.MarketName.substr(market.MarketName.length - 3)
-                ].MarketCurrencyLong,
-                LogoUrl: marketsMemo[
-                  market.MarketName.substr(market.MarketName.length - 3)
-                ].LogoUrl,
-              });
-            }
-            );
+            .map(market => ({
+              ...market,
+              MarketCurrency: marketsMemo[
+                market.MarketName.split('-')[1]
+              ].MarketCurrency,
+              MarketCurrencyLong: marketsMemo[
+                market.MarketName.split('-')[1]
+              ].MarketCurrencyLong,
+              LogoUrl: marketsMemo[
+                market.MarketName.split('-')[1]
+              ].LogoUrl,
+            }));
           cb(null, data2);
         }
       });
