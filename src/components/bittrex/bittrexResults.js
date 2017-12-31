@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment';
 import {
   RaisedButton,
   Table,
@@ -30,16 +31,16 @@ class BittrexResults extends React.Component {
 
     this.state = {
       summaries: '',
-      height: '500px',
+      height: '400px',
       fixedHeader: true,
       fixedFooter: true,
-      selectable: true,
-      multiSelectable: true,
-      showCheckboxes: true,
+      selectable: false,
+      multiSelectable: false,
+      showCheckboxes: false,
       enableSelectAll: false,
       deselectOnClickaway: true,
       showRowHover: false,
-      stripedRows: true,
+      stripedRows: false,
     };
   }
 
@@ -56,10 +57,35 @@ class BittrexResults extends React.Component {
     this.props.getMarketSummaries();
   };
 
-  // renderMarketSummaries = (summaries) =>
-  // summaries.map(({}) => {
-  //
-  // })
+  renderMarketSummaries = summaries => summaries.map(({
+      MarketName,
+      High,
+      Low,
+      Volume,
+      Last,
+      BaseVolume,
+      TimeStamp,
+      Bid,
+      Ask,
+      OpenBuyOrders,
+      OpenSellOrders,
+    }, i) => {
+    if (MarketName === 'USDT-BTC') this.setState(() => ({ 'USDT-BTC': MarketName }));
+
+    return (
+      <TableRow key={MarketName}>
+        <TableRowColumn>{i + 1}</TableRowColumn>
+        <TableRowColumn>{MarketName}</TableRowColumn>
+        {/* <TableRowColumn>{High}</TableRowColumn> */}
+        {/* <TableRowColumn>{Low}</TableRowColumn> */}
+        <TableRowColumn>{Volume.toFixed(2)}</TableRowColumn>
+        <TableRowColumn>{(Bid + Ask) / 2}</TableRowColumn>
+        <TableRowColumn>{OpenBuyOrders}</TableRowColumn>
+        <TableRowColumn>{OpenSellOrders}</TableRowColumn>
+        <TableRowColumn>{moment(`${TimeStamp}`).format('hh:mm, Do MMM YYYY')}</TableRowColumn>
+      </TableRow>
+    );
+  })
 
   render() {
     return (
@@ -85,11 +111,12 @@ class BittrexResults extends React.Component {
           >
             <TableRow>
               <TableHeaderColumn
-                colSpan="3"
+                colSpan="7"
                 tooltip="Bittrex Markets"
                 style={{
                   textAlign: 'center',
                   color: '#FFF',
+                  fontSize: '24px',
                 }}
               >
                 Bittrex Market Summaries
@@ -127,44 +154,9 @@ class BittrexResults extends React.Component {
             showRowHover={this.state.showRowHover}
             stripedRows={this.state.stripedRows}
           >
-            {this.state.summaries.length && this.state.summaries.map(({
-              MarketName,
-              High,
-              Low,
-              Volume,
-              Last,
-              BaseVolume,
-              TimeStamp,
-              Bid,
-              Ask,
-              OpenBuyOrders,
-              OpenSellOrders,
-            }, i) =>
-              <TableRow key={MarketName}>
-                <TableRowColumn>{i + 1}</TableRowColumn>
-                <TableRowColumn>{MarketName}</TableRowColumn>
-                {/* <TableRowColumn>{High}</TableRowColumn> */}
-                {/* <TableRowColumn>{Low}</TableRowColumn> */}
-                <TableRowColumn>{Volume}</TableRowColumn>
-                <TableRowColumn>{(Bid + Ask) / 2}</TableRowColumn>
-                <TableRowColumn>{OpenBuyOrders}</TableRowColumn>
-                <TableRowColumn>{OpenSellOrders}</TableRowColumn>
-                <TableRowColumn>{TimeStamp}</TableRowColumn>
-              </TableRow>
-            )}
+            {this.renderMarketSummaries()}
           </TableBody>
           <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
-            <TableRow>
-              <TableHeaderColumn >#</TableHeaderColumn>
-              <TableHeaderColumn >Name</TableHeaderColumn>
-              {/* <TableHeaderColumn >High</TableHeaderColumn> */}
-              {/* <TableHeaderColumn >Low</TableHeaderColumn> */}
-              <TableHeaderColumn >Volume</TableHeaderColumn>
-              <TableHeaderColumn >Price</TableHeaderColumn>
-              <TableHeaderColumn >Open Buy</TableHeaderColumn>
-              <TableHeaderColumn >Open Sell</TableHeaderColumn>
-              <TableHeaderColumn >Time Stamp</TableHeaderColumn>
-            </TableRow>
             <TableRow>
               <TableRowColumn colSpan="3" style={{ textAlign: 'center' }}>
                 Bittrex Market Summaries

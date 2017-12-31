@@ -84,6 +84,7 @@
     "apisauce": "^0.13.0",
     "express": "^4.15.3",
     "material-ui": "^0.18.3",
+    "moment": "^2.20.1",
     "mongoose": "^4.10.5",
     "morgan": "^1.8.2",
     "node-bittrex-api": "^0.8.1",
