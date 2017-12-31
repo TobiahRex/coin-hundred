@@ -41,6 +41,7 @@ class BittrexResults extends React.Component {
       deselectOnClickaway: true,
       showRowHover: false,
       stripedRows: false,
+      UsdtBtc: 1,
     };
   }
 
@@ -57,7 +58,16 @@ class BittrexResults extends React.Component {
     this.props.getMarketSummaries();
   };
 
-  renderMarketSummaries = summaries => summaries.map(({
+  renderMarketSummaries = (summaries) => {
+    let UsdtBtc = 0;
+    return summaries
+    .map((obj) => {
+      if (obj.MarketName === 'USDT-BTC') {
+        UsdtBtc = (obj.Bid + obj.Ask) / 2;
+      }
+      return obj;
+    })
+    .map(({
       MarketName,
       High,
       Low,
@@ -69,23 +79,26 @@ class BittrexResults extends React.Component {
       Ask,
       OpenBuyOrders,
       OpenSellOrders,
-    }, i) => {
-    if (MarketName === 'USDT-BTC') this.setState(() => ({ 'USDT-BTC': MarketName }));
-
-    return (
+    }, i) => (
       <TableRow key={MarketName}>
         <TableRowColumn>{i + 1}</TableRowColumn>
         <TableRowColumn>{MarketName}</TableRowColumn>
         {/* <TableRowColumn>{High}</TableRowColumn> */}
         {/* <TableRowColumn>{Low}</TableRowColumn> */}
         <TableRowColumn>{Volume.toFixed(2)}</TableRowColumn>
-        <TableRowColumn>{(Bid + Ask) / 2}</TableRowColumn>
+        <TableRowColumn>$
+          {
+            (MarketName.slice(0, 3) === 'BTC') ?
+            (UsdtBtc * ((Bid + Ask) / 2)).toFixed(4) :
+            ((Bid + Ask) / 2).toFixed(4)
+          }
+        </TableRowColumn>
         <TableRowColumn>{OpenBuyOrders}</TableRowColumn>
         <TableRowColumn>{OpenSellOrders}</TableRowColumn>
         <TableRowColumn>{moment(`${TimeStamp}`).format('hh:mm, Do MMM YYYY')}</TableRowColumn>
       </TableRow>
-    );
-  })
+    ));
+  }
 
   render() {
     return (
@@ -97,74 +110,75 @@ class BittrexResults extends React.Component {
           onClick={this.getMarketSummaries}
         />
         <br />
-        <Table
-          height={this.state.height}
-          fixedHeader={this.state.fixedHeader}
-          fixedFooter={this.state.fixedFooter}
-          selectable={this.state.selectable}
-          multiSelectable={this.state.multiSelectable}
-        >
-          <TableHeader
-            displaySelectAll={this.state.showCheckboxes}
-            adjustForCheckbox={this.state.showCheckboxes}
-            enableSelectAll={this.state.enableSelectAll}
-          >
-            <TableRow>
-              <TableHeaderColumn
-                colSpan="7"
-                tooltip="Bittrex Markets"
-                style={{
-                  textAlign: 'center',
-                  color: '#FFF',
-                  fontSize: '24px',
-                }}
+        {
+          this.state.summaries &&
+            <Table
+              height={this.state.height}
+              fixedHeader={this.state.fixedHeader}
+              fixedFooter={this.state.fixedFooter}
+              selectable={this.state.selectable}
+              multiSelectable={this.state.multiSelectable}
+            >
+              <TableHeader
+                displaySelectAll={this.state.showCheckboxes}
+                adjustForCheckbox={this.state.showCheckboxes}
+                enableSelectAll={this.state.enableSelectAll}
               >
-                Bittrex Market Summaries
-              </TableHeaderColumn>
-            </TableRow>
-            <TableRow>
-              <TableHeaderColumn tooltip="#" style={{
-                color: '#0097a7',
-              }}>#</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Name" style={{
-                color: '#0097a7',
-              }}>Name</TableHeaderColumn>
-              {/* <TableHeaderColumn tooltip="High">High</TableHeaderColumn> */}
-              {/* <TableHeaderColumn tooltip="Low">Low</TableHeaderColumn> */}
-              <TableHeaderColumn tooltip="Volume" style={{
-                color: '#0097a7',
-              }}>Volume</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Price" style={{
-                color: '#0097a7',
-              }}>Price</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Open Buy" style={{
-                color: '#0097a7',
-              }}>Open Buy</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Open Sell" style={{
-                color: '#0097a7',
-              }}>Open Sell</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Time Stamp" style={{
-                color: '#0097a7',
-              }}>Time Stamp</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody
-            displayRowCheckbox={this.state.showCheckboxes}
-            deselectOnClickaway={this.state.deselectOnClickaway}
-            showRowHover={this.state.showRowHover}
-            stripedRows={this.state.stripedRows}
-          >
-            {this.renderMarketSummaries()}
-          </TableBody>
-          <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
-            <TableRow>
-              <TableRowColumn colSpan="3" style={{ textAlign: 'center' }}>
-                Bittrex Market Summaries
-              </TableRowColumn>
-            </TableRow>
-          </TableFooter>
-          {/* {JSON.stringify(this.state.summaries)} */}
-        </Table>
+                <TableRow>
+                  <TableHeaderColumn
+                    colSpan="7"
+                    tooltip="Bittrex Markets"
+                    style={{
+                      textAlign: 'center',
+                      color: '#FFF',
+                      fontSize: '24px',
+                    }}
+                  >
+                    Bittrex Market Summaries
+                  </TableHeaderColumn>
+                </TableRow>
+                <TableRow>
+                  <TableHeaderColumn tooltip="#" style={{ color: '#0097a7' }}>
+                    #
+                  </TableHeaderColumn>
+                  <TableHeaderColumn tooltip="Name" style={{ color: '#0097a7' }}>
+                    Name
+                  </TableHeaderColumn>
+                  <TableHeaderColumn tooltip="Volume" style={{ color: '#0097a7' }}>
+                    Volume
+                  </TableHeaderColumn>
+                  <TableHeaderColumn tooltip="Price" style={{ color: '#0097a7' }}>
+                    Price
+                  </TableHeaderColumn>
+                  <TableHeaderColumn tooltip="Open Buy" style={{ color: '#0097a7' }}>
+                    Open Buy
+                  </TableHeaderColumn>
+                  <TableHeaderColumn tooltip="Open Sell" style={{ color: '#0097a7' }}>
+                    Open Sell
+                  </TableHeaderColumn>
+                  <TableHeaderColumn tooltip="Time Stamp" style={{ color: '#0097a7' }}>
+                    Time Stamp
+                  </TableHeaderColumn>
+                </TableRow>
+              </TableHeader>
+              <TableBody
+                displayRowCheckbox={this.state.showCheckboxes}
+                deselectOnClickaway={this.state.deselectOnClickaway}
+                showRowHover={this.state.showRowHover}
+                stripedRows={this.state.stripedRows}
+              >
+                {this.renderMarketSummaries(this.state.summaries)}
+              </TableBody>
+              <TableFooter adjustForCheckbox={this.state.showCheckboxes}>
+                <TableRow>
+                  <TableRowColumn colSpan="3" style={{ textAlign: 'center' }}>
+                    Bittrex Market Summaries
+                  </TableRowColumn>
+                </TableRow>
+              </TableFooter>
+              {/* {JSON.stringify(this.state.summaries)} */}
+            </Table>
+        }
       </div>
     );
   }
