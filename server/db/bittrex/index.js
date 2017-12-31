@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bittrexApi from 'node-bittrex-api';
+
 console.log('%cbittrexApi', 'background:red;', bittrexApi);
 
 bittrexApi.options({
@@ -14,12 +15,16 @@ const bittrexSchema = new mongoose.Schema({
 
 bittrexSchema.statics.getMarketSummaries = (cb) => {
   bittrexApi.getmarketsummaries((err, data) => {
-    if (err) {
-      console.log('error: ', err);
-      cb(err);
-    } else {
-      cb(null, data);
-    }
+    console.log('data: ', data);
+    if (err) cb(err);
+    else cb(null, data);
+  });
+};
+
+bittrexSchema.statics.getMarketSummary = (market, cb) => {
+  bittrexApi.getmarketsummary({ market }, (err, data) => {
+    if (err) cb(err);
+    else cb(null, data);
   });
 };
 

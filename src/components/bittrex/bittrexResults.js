@@ -82,9 +82,13 @@ class BittrexResults extends React.Component {
     }, i) => (
       <TableRow key={MarketName}>
         <TableRowColumn>{i + 1}</TableRowColumn>
-        <TableRowColumn>{MarketName}</TableRowColumn>
-        {/* <TableRowColumn>{High}</TableRowColumn> */}
-        {/* <TableRowColumn>{Low}</TableRowColumn> */}
+        <TableRowColumn>
+          {
+            (MarketName.slice(0, 3) === 'BTC') ?
+            MarketName.slice(4) :
+            MarketName
+          }
+        </TableRowColumn>
         <TableRowColumn>{Volume.toFixed(2)}</TableRowColumn>
         <TableRowColumn>$
           {
