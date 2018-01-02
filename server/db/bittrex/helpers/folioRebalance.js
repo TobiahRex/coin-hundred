@@ -84,36 +84,43 @@ const getAssetPrices = assets =>
   });
 
 const rebalancePortfolio = (totalValue, portfolio) => {
-  const percentages = Object
+  const rebalanceSummary = Object
   .keys(portfolio)
   .map(symbol => portfolio[symbol])
   .reduce((acc, n, i, array) => {
-    const reqPercent = n.percentages.desired || 0;
-    const currPercent = n.percentages.current || 0;
+    // identify new tokens added to portfolio.
+    // determine all tokens with custom percentages.
+    // infer all tokens with non-custom percentages.
 
-    if (reqPercent) {
-      if (currPercent) {
-        if (reqPercent !== currPercent) {
-          acc.reqPercent += Number(reqPercent);
-        }
-      } else {
-        console.log('Adding new token to portfolio: ', symbol); // eslint-disable-line
-      }
-    } else if (!currPercent) {
-      console.log('You are missing a current & request percent for asset: ', n.symbol, '\nAsset will be discluded from your portfolio entirely.'); // eslint-disable-line
-    }
-
-    if (i === (array.length - 1)) acc.otherPercent = 1 - acc.reqPercent;
-    acc.totalAssets += 1;
-
-    return acc;
+    // const reqPercent = n.percentages.desired || 0;
+    // const currPercent = n.percentages.current || 0;
+    //
+    // if (reqPercent) {
+    //   if (currPercent) {
+    //     if (reqPercent > currPercent) acc.increased.push(n);
+    //
+    //     if (reqPercent !== currPercent) acc.reqPercent += Number(reqPercent);
+    //   } else {
+    //     console.log('Adding new token to portfolio: ', symbol); // eslint-disable-line
+    //   }
+    // } else if (!currPercent) {
+    //   console.log('You are missing a current & request percent for asset: ', n.symbol, '\nAsset will be discluded from your portfolio entirely.'); // eslint-disable-line
+    // }
+    //
+    // if (i === (array.length - 1)) acc.otherPercent = 1 - acc.reqPercent;
+    // acc.totalAssets += 1;
+    //
+    // return acc;
   }, {
+    changed: [],
+    unchanged: [],
+    newTokens: [],
     totalAssets: 0,
-    reqPercent: 0,
     otherPercent: 0,
+    explicitPercent: 0,
   });
 
-  console.log('percentages: ', percentages);
+  console.log('rebalanceSummary: ', rebalanceSummary);
 };
 
 const getPortfolioValue = (prices, usdBtc, portfolio) => {
