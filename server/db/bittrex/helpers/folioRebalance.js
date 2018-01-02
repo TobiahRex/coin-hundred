@@ -23,34 +23,36 @@ new Promise((resolve, reject) => {
   .catch(reject);
 });
 
+const composePortfolio = assets =>
+  assets.reduce((acc, n) => (n[acc.symbol] = { ...acc }), {});
+
+const composeAssetPriceReq = assets =>
+  assets.map(asset => getMarketSummary(
+    asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
+  );
+
 const getAssetPrices = assets =>
 new Promise((resolve, reject) => {
-  // call 3rd party exchange and fetch prices for each asset.
+  // Call 3rd party exchange and fetch prices for each asset.
   // Calculate current asset value compared to it's Bitcoin value and dollar value.
-  // reduce the overall amount.
-  // return result.
-  const portfolioHash = {};
+  // Reduce the overall amount.
+  // Return result.
+  const portfolio = composePortfolio(assets);
+  const apiRequests = composeAssetPriceReq(assets);
 
-  const summaries = assets.map((asset) => {
-    portfolioHash[asset.symbol] = { ...asset };
-    return getMarketSummary(
-      asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`
-    );
-  });
-
-  Promise.all([...summaries])
+  Promise.all([...apiRequests])
   .then((results) => {
     let USD_BTC = '';
 
     const folioValue = results.map(({ result }) => {
-      const symbol = result.MarketName.split('-')[1];
-      if (symbol === 'BTC') USD_BTC = result.Last;
+        const symbol = result.MarketName.split('-')[1];
+        if (symbol === 'BTC') USD_BTC = result.Last;
 
-      return ({
-        symbol: result.MarketName.split('-')[1],
-        btcPrice: result.Last,
-      })
-      .reduce(({ symbol, btcPrice }, n) => {
+        return ({
+          symbol: result.MarketName.split('-')[1],
+          btcPrice: result.Last,
+        })
+        .reduce(({ symbol, btcPrice }, n) => {
 
       }, {});
       /* result[0] =
