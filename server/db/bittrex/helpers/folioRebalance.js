@@ -91,6 +91,11 @@ const rebalancePortfolio = (totalValue, portfolio) => {
     // identify new tokens added to portfolio.
     // determine all tokens with custom percentages.
     // infer all tokens with non-custom percentages.
+    // calculate non-custom token percentage distribution each.
+    // calculate percentage change per token between: "changed" & "unchanged".
+    // add auto token + amount to "re-allocation" pool.
+    // send re-allocation token to exchange & cash out to Bitcoin.
+    // buy new desired asset with custom percentage factor.
 
     // const reqPercent = n.percentages.desired || 0;
     // const currPercent = n.percentages.current || 0;
@@ -112,12 +117,13 @@ const rebalancePortfolio = (totalValue, portfolio) => {
     //
     // return acc;
   }, {
-    changed: [],
-    unchanged: [],
+    custom: [],
+    auto: [],
     newTokens: [],
     totalAssets: 0,
-    otherPercent: 0,
-    explicitPercent: 0,
+    autoPercentTotal: 0,
+    customPercentTotal: 0,
+    reAllocationPool: [],
   });
 
   console.log('rebalanceSummary: ', rebalanceSummary);
