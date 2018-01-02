@@ -57,15 +57,15 @@ new Promise((resolve, reject) => {
       });
     })
     .reduce((acc, { symbol, btcPrice }) => {
-      let tokenValue = USD_BTC / btcPrice;
+      let tokenValue = Number(USD_BTC) / Number(btcPrice);
 
       portfolio[symbol] = {
         ...portfolio[symbol],
         prices: {
-          btc: btcPrice,
+          btc: Number(btcPrice),
           usd: tokenValue,
         },
-        value: portfolio[symbol].balance * tokenValue,
+        value: Number(portfolio[symbol].balance) * tokenValue,
       };
       return (acc += portfolio[symbol].value);
     }, 0);
