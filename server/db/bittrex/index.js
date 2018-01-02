@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bittrexApi from 'node-bittrex-api';
 import { Promise as bbPromise } from 'bluebird';
+import folioRebalance from './helpers';
 
 console.log('%cbittrexApi', 'background:red;', bittrexApi);
 

@@ -30,15 +30,46 @@ new Promise((resolve, reject) => {
   // reduce the overall amount.
   // return result.
 
-  Promise.all([
-    assets.map(({ symbol }) =>
-      getMarketSummary(`BTC-${symbol === 'BTC' ? 'USD' : symbol}`)
-    ),
-  ])
+  const summaries = assets.map(({ symbol }) =>
+    getMarketSummary(symbol === 'BTC' ? 'USDT-BTC' : `BTC-${symbol}`)
+  );
+
+  Promise.all([...summaries])
   .then((results) => {
-    console.log('results: ', results);
+    let USD_BTC = '';
+
+    const folioValue = results.map(({ result }) => {
+      const symbol = result.MarketName.split('-')[1];
+      if (symbol === 'BTC') USD_BTC = result.Last;
+
+      return ({
+        symbol: result.MarketName.split('-')[1],
+        prices: {
+          btc: result.Last,
+          usd: 0,
+        },
+      })
+      .reduce(({ symbol, ['btc-price'], 'usd-price' }, n) => {
+        n + ('btc-price' * )
+      }, {});
+      /* result[0] =
+      { MarketName: 'BTC-SALT',
+        High: 0.00096938,
+        Low: 0.00079153,
+        Volume: 1235298.63211953,
+        Last: 0.00090106,
+        BaseVolume: 1109.3424853,
+        TimeStamp: '2018-01-02T05:32:45.267',
+        Bid: 0.00089936,
+        Ask: 0.00090106,
+        OpenBuyOrders: 1660,
+        OpenSellOrders: 3754,
+        PrevDay: 0.000882,
+        Created: '2017-10-16T17:32:48.777' }
+      */
+    });
   })
-  .catch(reject);
+  .catch(console.log);
 
   // return ({
   //   SALT: {
@@ -129,7 +160,7 @@ console.log(
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
       }, {
-        symbol: 'BCH',
+        symbol: 'BCC',
         contractAddress: '0x123123123123',
         balance: '5',
         percentage: '.2',
