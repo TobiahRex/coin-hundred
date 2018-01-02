@@ -96,6 +96,41 @@ const rebalancePortfolio = (totalValue, portfolio) => {
     // add auto token + amount to "re-allocation" pool.
     // send re-allocation token to exchange & cash out to Bitcoin.
     // buy new desired asset with custom percentage factor.
+    // send new tokens to app.
+
+    if (
+      !n.balance &&
+      !n.percentages.current &&
+      n.percentages.desired
+    ) {
+      console.log('Found new token.');
+      acc.custom.push(n);
+      acc.newTokens.push(n);
+      acc.customPercentTotal += Number(n.percentages.desired);
+    } else if (n.percentage.desired) {
+      console.log('Found custom percentage change for token: ', n.symbol);
+      acc.custom.push(n);
+      acc.customPercentTotal += Number(n.percentages.desired);
+      if (n.percentage.desired < n.percentage.current) {
+        console.log('Custom percentage is less than current percentage.');
+        acc.reAllocationPool.push(n);
+      }
+    } else if (
+      n.balance &&
+      n.percentages.current &&
+      n.percentages.desired === ('0' || 0 || '')
+    ) {
+      console.log('Found undesired token with balance: ', n.symbol, '\nbalance: ', n.balance);
+      acc.reAllocationPool.push(n);
+    } else if (
+      n.percentages.desired &&
+      n.percentages.current &&
+      n.percentages.desired === n.percentages.current
+    ) {
+      console.log('Found generic token with no changes.');
+      acc.auto.push(n);
+      acc.reAllocationPool.push(n);
+    }
 
     // const reqPercent = n.percentages.desired || 0;
     // const currPercent = n.percentages.current || 0;
