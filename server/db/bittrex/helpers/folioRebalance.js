@@ -24,7 +24,7 @@ new Promise((resolve, reject) => {
 });
 
 const getPortfolio = assets =>
-assets.reduce((acc, n) => (n[acc.symbol] = { ...acc }), {});
+assets.reduce((acc, n) => (acc[n.symbol] = { ...n }), {});
 
 const getAssetPriceReq = assets =>
 assets.map(asset => getMarketSummary(
@@ -46,20 +46,28 @@ new Promise((resolve, reject) => {
 
     const folioValue = results
     .map(({ result }) => {
-      const symbol = result.MarketName.split('-')[1];
+      console.log('result: ', result[0]);
+      const symbol = result[0].MarketName.split('-')[1];
       if (symbol === 'BTC') USD_BTC = result.Last;
-
       return ({
-        symbol: result.MarketName.split('-')[1],
-        btcPrice: result.Last,
+        symbol: result[0].MarketName.split('-')[1],
+        btcPrice: result[0].Last,
       });
     })
-    .reduce(({ symbol, btcPrice }, n) => {
+    .reduce((acc, { symbol, btcPrice }) => {
       let tokenValue = USD_BTC / btcPrice;
-      portfolio[symbol].prices.btc = btcPrice;
-      portfolio[symbol].prices.usd = tokenValue;
-      portfolio[symbol].value = portfolio[symbol].balance * tokenValue;
-      return (n += portfolio[symbol].value);
+
+      console.log('portfolio: ', portfolio);
+
+      portfolio[symbol] = {
+        ...portfolio[symbol],
+        prices: {
+          btc: btcPrice,
+          usd: tokenValue,
+        },
+        value: portfolio[symbol].balance * tokenValue,
+      };
+      return (acc += portfolio[symbol].value);
     }, 0);
     /* result[0] =
     { MarketName: 'BTC-SALT',
