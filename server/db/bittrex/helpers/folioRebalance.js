@@ -84,20 +84,27 @@ new Promise((resolve, reject) => {
 });
 
 const rebalancePortfolio = (totalValue, portfolio) => {
-  let mappedPercent = 0;
-  let unmappedPercent = 0;
-
-  Object
+  const percentages = Object
   .keys(portfolio)
   .map(symbol => portfolio[symbol])
-  .reduce((acc, n, i, array) => {}, {
+  .reduce((acc, n, i, array) => {
+    const reqPercent = n.percentages.desired || 0;
+
+    if (reqPercent) acc.mappedPercent += Number(reqPercent);
+    if (i === array.length) acc.unmappedPercent = 1 - acc.mappedPercent;
+
+    return acc;
+  }, {
     mappedPercent: 0,
     unmappedPercent: 0,
   });
+
+  console.log('percentages: ', percentages);
 };
 
-const getPortfolioValue = (prices, usdBtc, portfolio) =>
-  prices.reduce((acc, { symbol, btcPrice }) => {
+const getPortfolioValue = (prices, usdBtc, portfolio) => {
+
+  const portfolioValue = prices.reduce((acc, { symbol, btcPrice }) => {
     let tokenValue = symbol === 'BTC' ? btcPrice : usdBtc * btcPrice;
 
     console.log('symbol: ', symbol, '\ntokenValue: ', tokenValue);
@@ -112,6 +119,12 @@ const getPortfolioValue = (prices, usdBtc, portfolio) =>
     };
     return (acc += portfolio[symbol].value);
   }, 0);
+
+  return ({
+    portfolio,
+    portfolioValue,
+  });
+};
 
 const deposit = (newAsset, assets) => {
   if (!newAsset && typeof newAsset !== 'object') throw Error('Invalid argument "newAsset".');
@@ -155,7 +168,7 @@ console.log(
         symbol: 'ADA',
         contractAddress: '0x123123123123',
         balance: '1000',
-        percentage: {
+        percentages: {
           current: '.2',
           desired: '',
         },
@@ -166,7 +179,7 @@ console.log(
         symbol: 'BTC',
         contractAddress: '0x123123123123',
         balance: '15',
-        percentage: {
+        percentages: {
           current: '.2',
           desired: '.3',
         },
@@ -177,7 +190,7 @@ console.log(
         symbol: 'ETH',
         contractAddress: '0x123123123123',
         balance: '6',
-        percentage: {
+        percentages: {
           current: '.2',
           desired: '',
         },
@@ -188,7 +201,7 @@ console.log(
         symbol: 'BCC',
         contractAddress: '0x123123123123',
         balance: '5',
-        percentage: {
+        percentages: {
           current: '.2',
           desired: '',
         },
