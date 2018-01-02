@@ -29,10 +29,14 @@ new Promise((resolve, reject) => {
   // Calculate current asset value compared to it's Bitcoin value and dollar value.
   // reduce the overall amount.
   // return result.
+  const portfolioHash = {};
 
-  const summaries = assets.map(({ symbol }) =>
-    getMarketSummary(symbol === 'BTC' ? 'USDT-BTC' : `BTC-${symbol}`)
-  );
+  const summaries = assets.map((asset) => {
+    portfolioHash[asset.symbol] = { ...asset };
+    return getMarketSummary(
+      asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`
+    );
+  });
 
   Promise.all([...summaries])
   .then((results) => {
@@ -44,13 +48,10 @@ new Promise((resolve, reject) => {
 
       return ({
         symbol: result.MarketName.split('-')[1],
-        prices: {
-          btc: result.Last,
-          usd: 0,
-        },
+        btcPrice: result.Last,
       })
-      .reduce(({ symbol, ['btc-price'], 'usd-price' }, n) => {
-        n + ('btc-price' * )
+      .reduce(({ symbol, btcPrice }, n) => {
+
       }, {});
       /* result[0] =
       { MarketName: 'BTC-SALT',
