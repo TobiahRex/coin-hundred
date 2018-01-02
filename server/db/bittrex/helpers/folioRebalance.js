@@ -23,13 +23,13 @@ new Promise((resolve, reject) => {
   .catch(reject);
 });
 
-const composePortfolio = assets =>
-  assets.reduce((acc, n) => (n[acc.symbol] = { ...acc }), {});
+const getPortfolio = assets =>
+assets.reduce((acc, n) => (n[acc.symbol] = { ...acc }), {});
 
-const composeAssetPriceReq = assets =>
-  assets.map(asset => getMarketSummary(
-    asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
-  );
+const getAssetPriceReq = assets =>
+assets.map(asset => getMarketSummary(
+  asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
+);
 
 const getAssetPrices = assets =>
 new Promise((resolve, reject) => {
@@ -37,61 +37,66 @@ new Promise((resolve, reject) => {
   // Calculate current asset value compared to it's Bitcoin value and dollar value.
   // Reduce the overall amount.
   // Return result.
-  const portfolio = composePortfolio(assets);
-  const apiRequests = composeAssetPriceReq(assets);
+  const portfolio = getPortfolio(assets);
+  const apiRequests = getAssetPriceReq(assets);
 
   Promise.all([...apiRequests])
   .then((results) => {
     let USD_BTC = '';
 
-    const folioValue = results.map(({ result }) => {
-        const symbol = result.MarketName.split('-')[1];
-        if (symbol === 'BTC') USD_BTC = result.Last;
+    const folioValue = results
+    .map(({ result }) => {
+      const symbol = result.MarketName.split('-')[1];
+      if (symbol === 'BTC') USD_BTC = result.Last;
 
-        return ({
-          symbol: result.MarketName.split('-')[1],
-          btcPrice: result.Last,
-        })
-        .reduce(({ symbol, btcPrice }, n) => {
-
-      }, {});
-      /* result[0] =
-      { MarketName: 'BTC-SALT',
-        High: 0.00096938,
-        Low: 0.00079153,
-        Volume: 1235298.63211953,
-        Last: 0.00090106,
-        BaseVolume: 1109.3424853,
-        TimeStamp: '2018-01-02T05:32:45.267',
-        Bid: 0.00089936,
-        Ask: 0.00090106,
-        OpenBuyOrders: 1660,
-        OpenSellOrders: 3754,
-        PrevDay: 0.000882,
-        Created: '2017-10-16T17:32:48.777' }
-      */
-    });
+      return ({
+        symbol: result.MarketName.split('-')[1],
+        btcPrice: result.Last,
+      });
+    })
+    .reduce(({ symbol, btcPrice }, n) => {
+      let tokenValue = USD_BTC / btcPrice;
+      portfolio[symbol].prices.btc = btcPrice;
+      portfolio[symbol].prices.usd = tokenValue;
+      portfolio[symbol].value = portfolio[symbol].balance * tokenValue;
+      return (n += portfolio[symbol].value);
+    }, 0);
+    /* result[0] =
+    { MarketName: 'BTC-SALT',
+    High: 0.00096938,
+    Low: 0.00079153,
+    Volume: 1235298.63211953,
+    Last: 0.00090106,
+    BaseVolume: 1109.3424853,
+    TimeStamp: '2018-01-02T05:32:45.267',
+    Bid: 0.00089936,
+    Ask: 0.00090106,
+    OpenBuyOrders: 1660,
+    OpenSellOrders: 3754,
+    PrevDay: 0.000882,
+    Created: '2017-10-16T17:32:48.777' }
+    */
+    console.log('Folio value: ', folioValue);
   })
-  .catch(console.log);
-
-  // return ({
-  //   SALT: {
-  //     value: '15.00',
-  //   },
-  //   BTC: {
-  //     value: '15000.00',
-  //   },
-  //   ETH: {
-  //     value: '700.00',
-  //   },
-  //   BCH: {
-  //     value: '3000.00',
-  //   },
-  //   ADA: {
-  //     value: '0.70',
-  //   },
-  // });
+  .catch(reject);
 });
+// return ({
+//   SALT: {
+//     value: '15.00',
+//   },
+//   BTC: {
+//     value: '15000.00',
+//   },
+//   ETH: {
+//     value: '700.00',
+//   },
+//   BCH: {
+//     value: '3000.00',
+//   },
+//   ADA: {
+//     value: '0.70',
+//   },
+// });
 
 function deposit(newAsset, assets) {
   if (!newAsset && typeof newAsset !== 'object') throw Error('Invalid argument "newAsset".');
