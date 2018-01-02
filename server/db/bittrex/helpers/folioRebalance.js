@@ -67,64 +67,69 @@ new Promise((resolve, reject) => {
     const prices = results
     .map(({ result }) => {
       const symbol = result[0].MarketName.split('-')[1];
-      if (symbol === 'BTC') USD_BTC = result[0].Last;
+      if (symbol === 'BTC') USD_BTC = Number(result[0].Last);
       return ({
         symbol: result[0].MarketName.split('-')[1],
-        btcPrice: result[0].Last,
+        btcPrice: Number(result[0].Last),
       });
     });
-    return ({
+
+    resolve({
       prices,
+      portfolio,
       usdBtc: USD_BTC,
     });
   })
   .catch(reject);
 });
-// return ({
-//   SALT: {
-//     value: '15.00',
-//   },
-//   BTC: {
-//     value: '15000.00',
-//   },
-//   ETH: {
-//     value: '700.00',
-//   },
-//   BCH: {
-//     value: '3000.00',
-//   },
-//   ADA: {
-//     value: '0.70',
-//   },
-// });
 
-function deposit(newAsset, assets) {
+const rebalancePortfolio = (totalValue, portfolio) => {
+  let mappedPercent = 0;
+  let unmappedPercent = 0;
+
+  Object
+  .keys(portfolio)
+  .map(symbol => portfolio[symbol])
+  .reduce((acc, n, i, array) => {}, {
+    mappedPercent: 0,
+    unmappedPercent: 0,
+  });
+};
+
+const getPortfolioValue = (prices, usdBtc, portfolio) =>
+  prices.reduce((acc, { symbol, btcPrice }) => {
+    let tokenValue = symbol === 'BTC' ? btcPrice : usdBtc * btcPrice;
+
+    console.log('symbol: ', symbol, '\ntokenValue: ', tokenValue);
+
+    portfolio[symbol] = {
+      ...portfolio[symbol],
+      prices: {
+        btc: Number(btcPrice),
+        usd: tokenValue,
+      },
+      value: Number(portfolio[symbol].balance) * tokenValue,
+    };
+    return (acc += portfolio[symbol].value);
+  }, 0);
+
+const deposit = (newAsset, assets) => {
   if (!newAsset && typeof newAsset !== 'object') throw Error('Invalid argument "newAsset".');
 
   if (!assets && typeof assets !== 'object') throw Error('Invalid argument "assets".');
 
   /* Check current value of assets.
   - Fetch each Asset Price BTC-<Asset>
-  - Fetch BTC-USD price.
-  - Multiply the overall value by the folio settings.
+  - Get current overall portfolio value.
+  - Assign new portfolio per new custom settings.
   */
   getAssetPrices(assets)
-  // .then((prices) => {
-  //   // Asset QTY => Asset Price (BTC) => All Assets(BTC) => BTC-USD => Final USD value.
-  //   const folioUsdValue = Object
-  //   .keys(tokens)
-  //   .reduce((key, n) => {
-  //     const token = tokens[key];
-  //     const usdToken = prices[token.symbol].value * token.balance;
-  //     return (n + usdToken);
-  //   }, 0);
-  //   // Divide USD value by desired folio Percentages.
-  //   return rebalanceFolio(newFolio);
-  // })
-  // .then((newTokens) => {
-  //   tokens = newTokens;
-  // });
-}
+  .then(({ prices, usdBtc, portfolio }) =>
+    getPortfolioValue(prices, usdBtc, portfolio))
+  .then(({ portfolioValue, portfolio }) =>
+    rebalancePortfolio(portfolioValue, portfolio)
+  ).catch(console.log);
+};
 
 console.log(
   deposit(
@@ -139,7 +144,10 @@ console.log(
         contractAddress: '0x123123123123',
         decimals: '18',
         balance: '750',
-        percentage: '.2',
+        percentages: {
+          current: '.2',
+          desired: '.3',
+        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
@@ -147,7 +155,10 @@ console.log(
         symbol: 'ADA',
         contractAddress: '0x123123123123',
         balance: '1000',
-        percentage: '.2',
+        percentage: {
+          current: '.2',
+          desired: '',
+        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
@@ -155,7 +166,10 @@ console.log(
         symbol: 'BTC',
         contractAddress: '0x123123123123',
         balance: '15',
-        percentage: '.2',
+        percentage: {
+          current: '.2',
+          desired: '.3',
+        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
@@ -163,7 +177,10 @@ console.log(
         symbol: 'ETH',
         contractAddress: '0x123123123123',
         balance: '6',
-        percentage: '.2',
+        percentage: {
+          current: '.2',
+          desired: '',
+        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
@@ -171,7 +188,10 @@ console.log(
         symbol: 'BCC',
         contractAddress: '0x123123123123',
         balance: '5',
-        percentage: '.2',
+        percentage: {
+          current: '.2',
+          desired: '',
+        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
