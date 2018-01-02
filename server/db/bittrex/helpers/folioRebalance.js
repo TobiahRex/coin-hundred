@@ -17,28 +17,28 @@ bittrexApi.options({
 });
 
 const getMarketSummary = market =>
-new Promise((resolve, reject) => {
-  bbPromise.fromCallback(cb => bittrexApi.getmarketsummary({ market }, cb))
-  .then(resolve)
-  .catch(reject);
-  /* getMarketSummary result =
-  {
-    MarketName: 'BTC-SALT',
-    High: 0.00096938,
-    Low: 0.00079153,
-    Volume: 1235298.63211953,
-    Last: 0.00090106,
-    BaseVolume: 1109.3424853,
-    TimeStamp: '2018-01-02T05:32:45.267',
-    Bid: 0.00089936,
-    Ask: 0.00090106,
-    OpenBuyOrders: 1660,
-    OpenSellOrders: 3754,
-    PrevDay: 0.000882,
-    Created: '2017-10-16T17:32:48.777'
-  }
-  */
-});
+  new Promise((resolve, reject) => {
+    bbPromise.fromCallback(cb => bittrexApi.getmarketsummary({ market }, cb))
+    .then(resolve)
+    .catch(reject);
+    /* getMarketSummary result =
+    {
+      MarketName: 'BTC-SALT',
+      High: 0.00096938,
+      Low: 0.00079153,
+      Volume: 1235298.63211953,
+      Last: 0.00090106,
+      BaseVolume: 1109.3424853,
+      TimeStamp: '2018-01-02T05:32:45.267',
+      Bid: 0.00089936,
+      Ask: 0.00090106,
+      OpenBuyOrders: 1660,
+      OpenSellOrders: 3754,
+      PrevDay: 0.000882,
+      Created: '2017-10-16T17:32:48.777'
+    }
+    */
+  });
 
 const getPortfolio = assets =>
   assets.reduce((acc, n) => ({
@@ -47,41 +47,41 @@ const getPortfolio = assets =>
   }), {});
 
 const getAssetPriceReq = assets =>
-assets.map(asset => getMarketSummary(
-  asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
-);
+  assets.map(asset => getMarketSummary(
+    asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
+  );
 
 const getAssetPrices = assets =>
-new Promise((resolve, reject) => {
-  // Call 3rd party exchange and fetch prices for each asset.
-  // Calculate current asset value compared to it's Bitcoin value and dollar value.
-  // Reduce the overall amount.
-  // Return result.
-  const portfolio = getPortfolio(assets);
-  const apiRequests = getAssetPriceReq(assets);
+  new Promise((resolve, reject) => {
+    // Call 3rd party exchange and fetch prices for each asset.
+    // Calculate current asset value compared to it's Bitcoin value and dollar value.
+    // Reduce the overall amount.
+    // Return result.
+    const portfolio = getPortfolio(assets);
+    const apiRequests = getAssetPriceReq(assets);
 
-  Promise.all([...apiRequests])
-  .then((results) => {
-    let USD_BTC = '';
+    Promise.all([...apiRequests])
+    .then((results) => {
+      let USD_BTC = '';
 
-    const prices = results
-    .map(({ result }) => {
-      const symbol = result[0].MarketName.split('-')[1];
-      if (symbol === 'BTC') USD_BTC = Number(result[0].Last);
-      return ({
-        symbol: result[0].MarketName.split('-')[1],
-        btcPrice: Number(result[0].Last),
+      const prices = results
+      .map(({ result }) => {
+        const symbol = result[0].MarketName.split('-')[1];
+        if (symbol === 'BTC') USD_BTC = Number(result[0].Last);
+        return ({
+          symbol: result[0].MarketName.split('-')[1],
+          btcPrice: Number(result[0].Last),
+        });
       });
-    });
 
-    resolve({
-      prices,
-      portfolio,
-      usdBtc: USD_BTC,
-    });
-  })
-  .catch(reject);
-});
+      resolve({
+        prices,
+        portfolio,
+        usdBtc: USD_BTC,
+      });
+    })
+    .catch(reject);
+  });
 
 const rebalancePortfolio = (totalValue, portfolio) => {
   const percentages = Object
@@ -89,25 +89,34 @@ const rebalancePortfolio = (totalValue, portfolio) => {
   .map(symbol => portfolio[symbol])
   .reduce((acc, n, i, array) => {
     const reqPercent = n.percentages.desired || 0;
+    const currPercent = n.percentages.current || 0;
 
-    if (reqPercent) acc.mappedPercent += Number(reqPercent);
-    if (i === array.length) acc.unmappedPercent = 1 - acc.mappedPercent;
+    if (reqPercent) {
+      if (currPercent) {
+        if (reqPercent !== currPercent) {
+          acc.reqPercent += Number(reqPercent);
+        }
+      } else {
+        n.percentages.currPercent = 0;
+      }
+    }
+
+    if (i === (array.length - 1)) acc.otherPercent = 1 - acc.reqPercent;
+    acc.totalAssets += 1;
 
     return acc;
   }, {
-    mappedPercent: 0,
-    unmappedPercent: 0,
+    totalAssets: 0,
+    reqPercent: 0,
+    otherPercent: 0,
   });
 
   console.log('percentages: ', percentages);
 };
 
 const getPortfolioValue = (prices, usdBtc, portfolio) => {
-
   const portfolioValue = prices.reduce((acc, { symbol, btcPrice }) => {
     let tokenValue = symbol === 'BTC' ? btcPrice : usdBtc * btcPrice;
-
-    console.log('symbol: ', symbol, '\ntokenValue: ', tokenValue);
 
     portfolio[symbol] = {
       ...portfolio[symbol],
