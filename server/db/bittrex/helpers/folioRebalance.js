@@ -97,8 +97,10 @@ const rebalancePortfolio = (totalValue, portfolio) => {
           acc.reqPercent += Number(reqPercent);
         }
       } else {
-        n.percentages.currPercent = 0;
+        console.log('Adding new token to portfolio: ', symbol); // eslint-disable-line
       }
+    } else if (!currPercent) {
+      console.log('You are missing a current & request percent for asset: ', n.symbol, '\nAsset will be discluded from your portfolio entirely.'); // eslint-disable-line
     }
 
     if (i === (array.length - 1)) acc.otherPercent = 1 - acc.reqPercent;
