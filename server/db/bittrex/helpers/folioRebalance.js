@@ -78,6 +78,8 @@ new Promise((resolve, reject) => {
   // Calculate current asset value compared to it's Bitcoin value and dollar value.
   // reduce the overall amount.
   // return result.
+  const assetReqs = assets.map(({  }))
+
   return ({
     SALT: {
       value: '15.00',
@@ -125,15 +127,25 @@ function deposit(amount, folio) {
   });
 }
 
-console.log(deposit(
-  { amount: 1, asset: 'BTC', from: '000000000123' },
-  {
-    assets: {
-      SALT: '.2',
-      ADA: '.2',
-      BTC: '.2',
-      ETH: '.2',
-      BCH: '.2',
-    },
+console.log(
+  deposit({ amount: 1, asset: 'BTC', from: '000000000123' }, {
+    assets: [
+      {
+        symbol: 'SALT',
+        percent: '.2',
+      }, {
+        symbol: 'ADA',
+        percent: '.2',
+      }, {
+        symbol: 'BTC',
+        percent: '.2',
+      }, {
+        symbol: 'ETH',
+        percent: '.2',
+      }, {
+        symbol: 'BCH',
+        percent: '.2',
+      },
+    ],
   },
 ));
