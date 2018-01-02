@@ -7,6 +7,15 @@ Rebalance the portfolio;
 4) Send tokens to Cold Storage device from their respective exchanges.
 */
 
+import { Promise as bbPromise } from 'bluebird';
+import bittrexApi from 'node-bittrex-api';
+
+bittrexApi.options({
+  apikey: process.env.BITTREX_API_KEY,
+  apisecret: process.env.BITTREX_API_SECRET,
+  inverse_callback_arguments: true,
+});
+
 const tokens = {
   0: {
     symbol: 'SALT',
@@ -55,6 +64,13 @@ const tokens = {
     coldStorageAddress: '0x123123123',
   },
 };
+
+const getMarketSummary = market =>
+new Promise((resolve, reject) => {
+  bbPromise.fromCallback(cb => bittrexApi.getmarketsummary({ market }, cb))
+  .then(resolve)
+  .catch(reject);
+});
 
 const getAssetPrices = assets =>
 new Promise((resolve, reject) => {

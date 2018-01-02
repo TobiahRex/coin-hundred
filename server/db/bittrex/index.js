@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { Promise as bbPromise } from 'bluebird';
 import bittrexApi from 'node-bittrex-api';
+import { Promise as bbPromise } from 'bluebird';
 
 console.log('%cbittrexApi', 'background:red;', bittrexApi);
 
