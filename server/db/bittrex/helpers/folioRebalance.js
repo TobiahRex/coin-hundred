@@ -21,6 +21,23 @@ new Promise((resolve, reject) => {
   bbPromise.fromCallback(cb => bittrexApi.getmarketsummary({ market }, cb))
   .then(resolve)
   .catch(reject);
+  /* getMarketSummary result =
+  {
+    MarketName: 'BTC-SALT',
+    High: 0.00096938,
+    Low: 0.00079153,
+    Volume: 1235298.63211953,
+    Last: 0.00090106,
+    BaseVolume: 1109.3424853,
+    TimeStamp: '2018-01-02T05:32:45.267',
+    Bid: 0.00089936,
+    Ask: 0.00090106,
+    OpenBuyOrders: 1660,
+    OpenSellOrders: 3754,
+    PrevDay: 0.000882,
+    Created: '2017-10-16T17:32:48.777'
+  }
+  */
 });
 
 const getPortfolio = assets =>
@@ -47,44 +64,19 @@ new Promise((resolve, reject) => {
   .then((results) => {
     let USD_BTC = '';
 
-    const folioValue = results
+    const prices = results
     .map(({ result }) => {
       const symbol = result[0].MarketName.split('-')[1];
-      if (symbol === 'BTC') USD_BTC = result.Last;
+      if (symbol === 'BTC') USD_BTC = result[0].Last;
       return ({
         symbol: result[0].MarketName.split('-')[1],
         btcPrice: result[0].Last,
       });
-    })
-    .reduce((acc, { symbol, btcPrice }) => {
-      let tokenValue = Number(USD_BTC) / Number(btcPrice);
-
-      portfolio[symbol] = {
-        ...portfolio[symbol],
-        prices: {
-          btc: Number(btcPrice),
-          usd: tokenValue,
-        },
-        value: Number(portfolio[symbol].balance) * tokenValue,
-      };
-      return (acc += portfolio[symbol].value);
-    }, 0);
-    /* result[0] =
-    { MarketName: 'BTC-SALT',
-    High: 0.00096938,
-    Low: 0.00079153,
-    Volume: 1235298.63211953,
-    Last: 0.00090106,
-    BaseVolume: 1109.3424853,
-    TimeStamp: '2018-01-02T05:32:45.267',
-    Bid: 0.00089936,
-    Ask: 0.00090106,
-    OpenBuyOrders: 1660,
-    OpenSellOrders: 3754,
-    PrevDay: 0.000882,
-    Created: '2017-10-16T17:32:48.777' }
-    */
-    console.log('Folio value: ', folioValue);
+    });
+    return ({
+      prices,
+      usdBtc: USD_BTC,
+    });
   })
   .catch(reject);
 });
