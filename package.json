@@ -88,6 +88,7 @@
     "moment": "^2.20.1",
     "mongoose": "^4.10.5",
     "morgan": "^1.8.2",
+    "node-binance-api": "^0.3.0",
     "node-bittrex-api": "^0.8.1",
     "path": "^0.12.7",
     "react": "^15.5.4",

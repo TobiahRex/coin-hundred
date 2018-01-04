@@ -10,6 +10,7 @@ Rebalance the portfolio;
 
 import { Promise as bbPromise } from 'bluebird';
 import bittrexApi from 'node-bittrex-api';
+import binance from 'node-binance-api';
 
 bittrexApi.options({
   apikey: process.env.BITTREX_API_KEY,
@@ -17,11 +18,37 @@ bittrexApi.options({
   inverse_callback_arguments: true,
 });
 
-const _getMarketSummary = market =>
+const _getMarketSummary = asset =>
   new Promise((resolve, reject) => {
-    bbPromise.fromCallback(cb => bittrexApi.getmarketsummary({ market }, cb))
-    .then(resolve)
-    .catch(reject);
+    const binancePrices = {};
+
+    binance.prices((tickers) => {
+      binancePrices.push(tickers);
+    });
+
+    asset.prices.reduce((acc, { exchange, symbol }) => {
+      switch (exchange) {
+        case 'bittrex': {
+          acc.apiRequests.push(
+            bbPromise.fromCallback(cb =>
+              bittrexApi.getmarketsummary({ symbol }, cb)
+            )
+            .then(resolve)
+            .catch(reject)
+          );
+          return acc;
+        }
+        case 'binance': {
+          const currentPrice = '';
+          binancePrices[]
+          acc.updatedAsset.push()
+        } break;
+        default: return acc;
+      }
+    }, {
+      apiRequests: [],
+      updatedAsset: [],
+    });
     /* getMarketSummary result =
     {
       MarketName: 'BTC-SALT',
@@ -48,9 +75,7 @@ const _getPortfolio = assets =>
   }), {});
 
 const _getAssetPriceReq = assets =>
-  assets.map(asset => _getMarketSummary(
-    asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
-  );
+  assets.map(asset => _getMarketSummary(asset.prices));
 
 const getAssetPrices = assets =>
   new Promise((resolve, reject) => {
@@ -59,7 +84,7 @@ const getAssetPrices = assets =>
     // Reduce the overall amount.
     // Return result.
     const portfolio = _getPortfolio(assets);
-    const apiRequests = _getAssetPriceReq(assets);
+    const { apiRequests, prices } = _getAssetPriceReq(assets);
 
     Promise.all([...apiRequests])
     .then((results) => {
@@ -217,14 +242,18 @@ console.log(
         marketName: 'Salt',
         contractAddress: '0x123123123123',
         publicExgAddress: '0x123123123',
-        exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
         decimals: '18',
-        balance: '750',
-        prices: {
-          'BTC-SALT': '',
-          'ETH-SALT': '',
-        },
+        balance: '950',
+        prices: [{
+          exchange: 'bittrex',
+          symbol: 'BTC-SALT',
+          price: '',
+        }, {
+          exchange: 'bittrex',
+          symbol: 'ETH-SALT',
+          price: '',
+        }],
         percentages: {
           current: '.2',
           desired: '.3',
@@ -248,13 +277,13 @@ console.log(
         },
       }, {
         symbol: 'BTC',
-        marketName: 'Salt',
+        marketName: 'Bitcoin',
         contractAddress: '0x123123123123',
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
         decimals: '18',
-        balance: '750',
+        balance: '15',
         prices: {
           'USDT-BTC': '',
           'BTC-ETH': '',
@@ -271,7 +300,7 @@ console.log(
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
         decimals: '18',
-        balance: '750',
+        balance: '6',
         prices: {
           'BTC-ETH': '',
           'USDT-ETH': '',
@@ -288,10 +317,10 @@ console.log(
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
         decimals: '18',
-        balance: '750',
+        balance: '2',
         prices: {
           'BTC-BCC': '',
-          'USDT-BCC': '',
+          'ETH-BCC': '',
         },
         percentages: {
           current: '.2',

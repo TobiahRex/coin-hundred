@@ -3972,6 +3972,13 @@ no-case@^2.2.0:
   dependencies:
     lower-case "^1.1.1"
 
+node-binance-api@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/node-binance-api/-/node-binance-api-0.3.0.tgz#3cde3f830b1babb04f257f0fb828ef1fa1c0bb6b"
+  dependencies:
+    request "^2.83.0"
+    ws "^3.2.0"
+
 node-bittrex-api@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/node-bittrex-api/-/node-bittrex-api-0.8.1.tgz#49c69de881e985ef63adaa95ec9148326d45a998"
@@ -5200,7 +5207,7 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-request@2, "request@>= 2.35.0", request@^2.49.0, request@^2.61.0:
+request@2, "request@>= 2.35.0", request@^2.49.0, request@^2.61.0, request@^2.83.0:
   version "2.83.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
   dependencies:
@@ -6186,7 +6193,7 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^3.3.1:
+ws@^3.2.0, ws@^3.3.1:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/ws/-/ws-3.3.3.tgz#f1cf84fe2d5e901ebce94efaece785f187a228f2"
   dependencies:
