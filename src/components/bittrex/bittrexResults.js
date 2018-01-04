@@ -88,7 +88,7 @@ class BittrexResults extends React.Component {
         <TableRowColumn>
           {
             MarketName.split('-')[0] === 'BTC' ?
-            `${MarketCurrencyLong} (${MarketCurrency})}` :
+            `${MarketCurrencyLong} (${MarketCurrency})` :
             MarketName
           }
         </TableRowColumn>

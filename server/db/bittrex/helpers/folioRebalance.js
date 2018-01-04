@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /*
 Rebalance the portfolio;
 - Hash table containing all tokens owned.
@@ -16,7 +17,7 @@ bittrexApi.options({
   inverse_callback_arguments: true,
 });
 
-const getMarketSummary = market =>
+const _getMarketSummary = market =>
   new Promise((resolve, reject) => {
     bbPromise.fromCallback(cb => bittrexApi.getmarketsummary({ market }, cb))
     .then(resolve)
@@ -40,14 +41,14 @@ const getMarketSummary = market =>
     */
   });
 
-const getPortfolio = assets =>
+const _getPortfolio = assets =>
   assets.reduce((acc, n) => ({
     ...acc,
     [n.symbol]: { ...n },
   }), {});
 
-const getAssetPriceReq = assets =>
-  assets.map(asset => getMarketSummary(
+const _getAssetPriceReq = assets =>
+  assets.map(asset => _getMarketSummary(
     asset.symbol === 'BTC' ? 'USDT-BTC' : `BTC-${asset.symbol}`)
   );
 
@@ -57,8 +58,8 @@ const getAssetPrices = assets =>
     // Calculate current asset value compared to it's Bitcoin value and dollar value.
     // Reduce the overall amount.
     // Return result.
-    const portfolio = getPortfolio(assets);
-    const apiRequests = getAssetPriceReq(assets);
+    const portfolio = _getPortfolio(assets);
+    const apiRequests = _getAssetPriceReq(assets);
 
     Promise.all([...apiRequests])
     .then((results) => {
@@ -118,7 +119,7 @@ const rebalancePortfolio = (totalValue, portfolio) => {
     } else if (
       n.balance &&
       n.percentages.current &&
-      n.percentages.desired === ('0' || 0 || '')
+      (!n.percentages.desired || (n.percentages.desired === '0'))
     ) {
       console.log('Found undesired token with balance: ', n.symbol, '\nbalance: ', n.balance);
       acc.reAllocationPool.push(n);
@@ -213,60 +214,89 @@ console.log(
     [
       {
         symbol: 'SALT',
+        marketName: 'Salt',
         contractAddress: '0x123123123123',
+        publicExgAddress: '0x123123123',
+        exchange: 'bittrex',
+        coldStorageAddress: '0x123123123',
         decimals: '18',
         balance: '750',
+        prices: {
+          'BTC-SALT': '',
+          'ETH-SALT': '',
+        },
         percentages: {
           current: '.2',
           desired: '.3',
         },
-        publicExgAddress: '0x123123123',
-        exchange: 'bittrex',
-        coldStorageAddress: '0x123123123',
       }, {
         symbol: 'ADA',
+        marketName: 'Cardano',
         contractAddress: '0x123123123123',
-        balance: '1000',
-        percentages: {
-          current: '.2',
-          desired: '',
-        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
-      }, {
-        symbol: 'BTC',
-        contractAddress: '0x123123123123',
-        balance: '15',
+        decimals: '18',
+        balance: '1000',
+        prices: {
+          'BTC-ADA': '',
+          'ETH-ADA': '',
+        },
         percentages: {
           current: '.2',
           desired: '.3',
         },
+      }, {
+        symbol: 'BTC',
+        marketName: 'Salt',
+        contractAddress: '0x123123123123',
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
+        decimals: '18',
+        balance: '750',
+        prices: {
+          'USDT-BTC': '',
+          'BTC-ETH': '',
+        },
+        percentages: {
+          current: '.2',
+          desired: '.3',
+        },
       }, {
         symbol: 'ETH',
+        marketName: 'Ethereum',
         contractAddress: '0x123123123123',
-        balance: '6',
-        percentages: {
-          current: '.2',
-          desired: '',
-        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
+        decimals: '18',
+        balance: '750',
+        prices: {
+          'BTC-ETH': '',
+          'USDT-ETH': '',
+        },
+        percentages: {
+          current: '.2',
+          desired: '.3',
+        },
       }, {
         symbol: 'BCC',
+        marketName: 'Bitcoin Cash',
         contractAddress: '0x123123123123',
-        balance: '5',
-        percentages: {
-          current: '.2',
-          desired: '',
-        },
         publicExgAddress: '0x123123123',
         exchange: 'bittrex',
         coldStorageAddress: '0x123123123',
+        decimals: '18',
+        balance: '750',
+        prices: {
+          'BTC-BCC': '',
+          'USDT-BCC': '',
+        },
+        percentages: {
+          current: '.2',
+          desired: '.3',
+        },
       },
     ],
   )
