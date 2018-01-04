@@ -1,3 +1,11 @@
+/*
+  TODO:
+    - Refactor "getPortfolio"
+    * Need to determine how to fetch the current portfolio from the database.
+    * What kind of database.
+    * What's the difference between the database Schema and the asset object from the Front End?
+*/
+
 /* eslint-disable no-console */
 /*
 Rebalance the portfolio;
@@ -30,7 +38,7 @@ const _getMarketSummary = asset =>
       switch (next.exchange) {
 
         case 'bittrex': {
-          acc.apiRequests.push(
+          acc.bittrexApiRequests.push(
             bbPromise
             .fromCallback(cb =>
               bittrexApi.getmarketsummary({ market: next.symbol }, cb))
@@ -50,7 +58,7 @@ const _getMarketSummary = asset =>
         default: return acc;
       }
     }, {
-      apiRequests: [],
+      bittrexApiRequests: [],
       currentAssetPrices: {},
     });
     /* getMarketSummary result =
@@ -87,10 +95,16 @@ const getAssetPrices = assets =>
     // Calculate current asset value compared to it's Bitcoin value and dollar value.
     // Reduce the overall amount.
     // Return result.
-    const portfolio = _getPortfolio(assets);
-    const { apiRequests, currentAssetPrices } = _getAssetPriceReq(assets);
+    const
+      portfolio = _getPortfolio(assets),
+      {
+        bittrexApiRequests,
+        currentAssetPrices,
+      } = _getAssetPriceReq(assets);
 
-    Promise.all([...apiRequests])
+    Promise.all([
+      ...bittrexApiRequests,
+    ])
     .then((results) => {
       let USD_BTC = '';
 
@@ -98,20 +112,27 @@ const getAssetPrices = assets =>
       // b) add bittrex price to "updatedAsset" prices as a whole.
       const prices = results
       .map(({ result }) => {
-        const updatedAssetPrices = currentAssetPrices[result[0].MarketName].prices.map((priceObj) => {
-          if (priceObj.exchange === 'bittrex') {
-            priceObj.price = result[0].Last;
-            return priceObj;
-          }
-          return priceObj;
-        });
+        const
+          resultPrice = Number(result[0].Last),
 
-        const symbol = result[0].MarketName.split('-')[1];
-        if (symbol === 'BTC') USD_BTC = Number(result[0].Last);
+          resultSymbol = result[0].MarketName,
+
+          updatedAssetPrices = currentAssetPrices[resultSymbol]
+          .prices.map((priceObj) => {
+            if (priceObj.exchange === 'bittrex') {
+              priceObj.price = resultPrice;
+              return priceObj;
+            }
+            return priceObj;
+          });
+        console.log('updatedAssetPrices: ', updatedAssetPrices);
+
+        if (resultSymbol === 'USDT-BTC') USD_BTC = resultPrice;
 
         return ({
-          symbol: result[0].MarketName.split('-')[1],
-          btcPrice: Number(result[0].Last),
+          symbol: resultSymbol,
+          btcPrice: USD_BTC,
+          updatedAssetPrices,
         });
       });
 
