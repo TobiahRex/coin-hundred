@@ -26,23 +26,24 @@ const _getMarketSummary = asset =>
       binancePrices.push(tickers);
     });
 
-    asset.prices.reduce((acc, { exchange, symbol }) => {
-      switch (exchange) {
+    asset.prices.reduce((acc, next) => {
+      switch (next.exchange) {
         case 'bittrex': {
           acc.apiRequests.push(
-            bbPromise.fromCallback(cb =>
-              bittrexApi.getmarketsummary({ symbol }, cb)
-            )
+            bbPromise
+            .fromCallback(cb =>
+              bittrexApi.getmarketsummary({ market: next.symbol }, cb))
             .then(resolve)
             .catch(reject)
           );
           return acc;
         }
         case 'binance': {
-          const currentPrice = '';
-          binancePrices[]
-          acc.updatedAsset.push()
-        } break;
+          const currentPrice = binancePrices[next.symbol.split('-').join('')];
+          next.price = currentPrice;
+          acc.updatedAsset.push(next);
+          return acc;
+        }
         default: return acc;
       }
     }, {
