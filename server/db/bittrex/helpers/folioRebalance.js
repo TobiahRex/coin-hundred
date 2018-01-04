@@ -51,7 +51,7 @@ const _getMarketSummary = asset =>
       }
     }, {
       apiRequests: [],
-      updatedAssets: {},
+      currentAssetPrices: {},
     });
     /* getMarketSummary result =
     {
@@ -88,7 +88,7 @@ const getAssetPrices = assets =>
     // Reduce the overall amount.
     // Return result.
     const portfolio = _getPortfolio(assets);
-    const { apiRequests, updatedAssets } = _getAssetPriceReq(assets);
+    const { apiRequests, currentAssetPrices } = _getAssetPriceReq(assets);
 
     Promise.all([...apiRequests])
     .then((results) => {
@@ -98,7 +98,14 @@ const getAssetPrices = assets =>
       // b) add bittrex price to "updatedAsset" prices as a whole.
       const prices = results
       .map(({ result }) => {
-        updatedAssets
+        const updatedAssetPrices = currentAssetPrices[result[0].MarketName].prices.map((priceObj) => {
+          if (priceObj.exchange === 'bittrex') {
+            priceObj.price = result[0].Last;
+            return priceObj;
+          }
+          return priceObj;
+        });
+
         const symbol = result[0].MarketName.split('-')[1];
         if (symbol === 'BTC') USD_BTC = Number(result[0].Last);
 
