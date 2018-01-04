@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /*
   TODO:
     - Refactor "getPortfolio"
@@ -8,17 +9,6 @@
      - Back end should draw from the database.
      - Desired changes made in the front end should be sent as "desired changes" to the database and stored.  Redux will simply articulate what's stored in the Back End database.
 */
-
-/* eslint-disable no-console */
-/*
-Rebalance the portfolio;
-- Hash table containing all tokens owned.
-1) New deposit of 1 Bitcoin - distributed across all owned tokens evenly.
-2) New deposit of 1 Bitcoin - increase ETH to 30% and evenly distribute rest.
-3) New deposit of 1 Bitcoin - increase ETH, BCH & BTC to 20% each, and 40% evenly across remaining tokens.
-4) Send tokens to Cold Storage device from their respective exchanges.
-*/
-
 import { Promise as bbPromise } from 'bluebird';
 import bittrexApi from 'node-bittrex-api';
 import binance from 'node-binance-api';
@@ -31,13 +21,15 @@ bittrexApi.options({
 
 const _getMarketSummary = asset =>
   new Promise((resolve, reject) => {
-    const binancePrices = {};
+    let binancePrices = {};
 
     binance.prices((tickers) => {
-      binancePrices.push(tickers);
+      if (!Object.keys(tickers)) reject('Could not fetch prices from Binance.');
+      binancePrices = { ...tickers };
     });
 
-    asset.prices.reduce((acc, next) => {
+
+    const marketSummary = asset.prices.reduce((acc, next) => {
       switch (next.exchange) {
 
         case 'bittrex': {
@@ -64,6 +56,7 @@ const _getMarketSummary = asset =>
       bittrexApiRequests: [],
       currentAssetPrices: {},
     });
+    resolve(marketSummary);
     /* getMarketSummary result =
     {
       MarketName: 'BTC-SALT',
