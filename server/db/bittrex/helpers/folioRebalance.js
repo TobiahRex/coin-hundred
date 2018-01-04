@@ -28,6 +28,7 @@ const _getMarketSummary = asset =>
 
     asset.prices.reduce((acc, next) => {
       switch (next.exchange) {
+
         case 'bittrex': {
           acc.apiRequests.push(
             bbPromise
@@ -38,17 +39,19 @@ const _getMarketSummary = asset =>
           );
           return acc;
         }
+
         case 'binance': {
           const currentPrice = binancePrices[next.symbol.split('-').join('')];
           next.price = currentPrice;
-          acc.updatedAsset.push(next);
+          acc.updatedAssets[next.symbol] = { ...next };
           return acc;
         }
+
         default: return acc;
       }
     }, {
       apiRequests: [],
-      updatedAsset: [],
+      updatedAssets: {},
     });
     /* getMarketSummary result =
     {
@@ -85,16 +88,20 @@ const getAssetPrices = assets =>
     // Reduce the overall amount.
     // Return result.
     const portfolio = _getPortfolio(assets);
-    const { apiRequests, prices } = _getAssetPriceReq(assets);
+    const { apiRequests, updatedAssets } = _getAssetPriceReq(assets);
 
     Promise.all([...apiRequests])
     .then((results) => {
       let USD_BTC = '';
 
+      // a) iterate through bittrex results and extract USD value from each asset.
+      // b) add bittrex price to "updatedAsset" prices as a whole.
       const prices = results
       .map(({ result }) => {
+        updatedAssets
         const symbol = result[0].MarketName.split('-')[1];
         if (symbol === 'BTC') USD_BTC = Number(result[0].Last);
+
         return ({
           symbol: result[0].MarketName.split('-')[1],
           btcPrice: Number(result[0].Last),
