@@ -4,6 +4,9 @@
     * Need to determine how to fetch the current portfolio from the database.
     * What kind of database.
     * What's the difference between the database Schema and the asset object from the Front End?
+     - Front end should draw from the database.
+     - Back end should draw from the database.
+     - Desired changes made in the front end should be sent as "desired changes" to the database and stored.  Redux will simply articulate what's stored in the Back End database.
 */
 
 /* eslint-disable no-console */
