@@ -26,24 +26,22 @@ binance.options({
 const _getExchangePrices = assets =>
 new Promise((resolve, reject) => {
   assets.map((assetObj) => {
-    // console.log(JSON.stringify(asset, null, 2));
+    console.log(JSON.stringify(assetObj, null, 2));
     let binancePrices = {};
 
-    bbPromise.fromCallback(cb => binance.prices(cb))
-    .then((tickers) => {
+    binance.prices((tickers) => {
       binancePrices = { ...tickers };
-    })
-    .catch(reject);
+    });
 
-    const marketSummary = assetObj.reduce((acc, next) => {
+    const marketSummary = assetObj.prices.reduce((acc, next) => {
       switch (next.exchange) {
         case 'bittrex': {
-          const bittrexRequest = new Promise((res, rej) => {
+          const bittrexRequest = new Promise((res) => {
             bbPromise.fromCallback(cb =>
               bittrexApi.getmarketsummary({ market: next.symbol }, cb)
             )
             .then(res)
-            .catch(rej);
+            .catch(reject);
           });
           acc.bittrexApiRequests.push(bittrexRequest);
           return acc;
@@ -82,13 +80,14 @@ new Promise((resolve, reject) => {
     Created: '2017-10-16T17:32:48.777'
   }
   */
+  });
 });
 
-const _getPortfolio = assets =>
-assets.reduce((acc, n) => ({
-  ...acc,
-  [n.symbol]: { ...n },
-}), {});
+// const _getPortfolio = assets =>
+// assets.reduce((acc, n) => ({
+//   ...acc,
+//   [n.symbol]: { ...n },
+// }), {});
 
 const getAssetPrices = assets =>
 new Promise((resolve, reject) => {
@@ -97,14 +96,17 @@ new Promise((resolve, reject) => {
   // Reduce the overall amount.
   // Return result.
   let workingPrices = {};
-  const portfolio = _getPortfolio(assets);
+  // const portfolio = _getPortfolio(assets);
 
   _getExchangePrices(assets)
   .then(({ bittrexApiRequests, partialAssetPrices }) => {
     workingPrices = { ...partialAssetPrices };
-    return Promise.all([ ...bittrexApiRequests ]);
+    return Promise.all([
+      ...bittrexApiRequests,
+    ]);
   })
   .then((results) => {
+    console.log('results: ', results);
     let USD_BTC = '';
 
     // a) iterate through bittrex results and extract USD value from each asset.
@@ -113,17 +115,17 @@ new Promise((resolve, reject) => {
     .map(({ result }) => {
       console.log('bittrex result: ', result);
       const
-      resultPrice = result[0].Last,
+        resultPrice = result[0].Last,
 
-      resultSymbol = result[0].MarketName,
+        resultSymbol = result[0].MarketName,
 
-      updatedPrices = workingPrices[resultSymbol]
-      .prices
-      .map((priceObj) => {
-        if (priceObj.exchange === 'bittrex') priceObj.price = resultPrice;
+        updatedPrices = workingPrices[resultSymbol]
+        .prices
+        .map((priceObj) => {
+          if (priceObj.exchange === 'bittrex') priceObj.price = resultPrice;
 
-        return priceObj;
-      });
+          return priceObj;
+        });
       console.log('updatedPrices: ', updatedPrices);
 
       if (resultSymbol === 'USDT-BTC') USD_BTC = resultPrice;
@@ -134,7 +136,6 @@ new Promise((resolve, reject) => {
         updatedPrices,
       });
     });
-    console.log('\nexchange prices: ', JSON.stringify(prices, null, 2));
     resolve(prices);
   })
   .catch(reject);
@@ -221,26 +222,26 @@ new Promise((resolve, reject) => {
 //   console.log('rebalanceSummary: ', rebalanceSummary);
 // };
 
-const getPortfolioValue = (prices, usdBtc, portfolio) => {
-  const portfolioValue = prices.reduce((acc, { symbol, btcPrice }) => {
-    let tokenValue = symbol === 'BTC' ? btcPrice : usdBtc * btcPrice;
-
-    portfolio[symbol] = {
-      ...portfolio[symbol],
-      prices: {
-        btc: Number(btcPrice),
-        usd: tokenValue,
-      },
-      value: Number(portfolio[symbol].balance) * tokenValue,
-    };
-    return (acc += portfolio[symbol].value);
-  }, 0);
-
-  return ({
-    portfolio,
-    portfolioValue,
-  });
-};
+// const getPortfolioValue = (prices, usdBtc, portfolio) => {
+//   const portfolioValue = prices.reduce((acc, { symbol, btcPrice }) => {
+//     let tokenValue = symbol === 'BTC' ? btcPrice : usdBtc * btcPrice;
+//
+//     portfolio[symbol] = {
+//       ...portfolio[symbol],
+//       prices: {
+//         btc: Number(btcPrice),
+//         usd: tokenValue,
+//       },
+//       value: Number(portfolio[symbol].balance) * tokenValue,
+//     };
+//     return (acc += portfolio[symbol].value);
+//   }, 0);
+//
+//   return ({
+//     portfolio,
+//     portfolioValue,
+//   });
+// };
 
 const deposit = (newAsset, assets) => {
   if (!newAsset && typeof newAsset !== 'object') throw Error('Invalid argument "newAsset".');
@@ -253,14 +254,16 @@ const deposit = (newAsset, assets) => {
   - Assign new portfolio per new custom settings.
   */
   getAssetPrices(assets)
-  // .then(({ prices, usdBtc, portfolio }) =>
   .then((result) => {
     console.log('\n "getAssetPrices" RESULT: ', result);
-  }
+  })
+  .catch(err => {
+    console.log('ERROR: ', err);
+  });
+  // .then(({ prices, usdBtc, portfolio }) =>
   // getPortfolioValue(prices, usdBtc, portfolio))
   // .then(({ portfolioValue, portfolio }) =>
   //   rebalancePortfolio(portfolioValue, portfolio)
-  ).catch(console.log);
 };
 
 deposit(
@@ -343,7 +346,7 @@ deposit(
       balance: '6',
       prices: [{
         exchange: 'bittrex',
-        symbol: 'UDST-ETH',
+        symbol: 'USDT-ETH',
         price: '',
       }, {
         exchange: 'bittrex',
