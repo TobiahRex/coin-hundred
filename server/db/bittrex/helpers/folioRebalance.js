@@ -24,9 +24,7 @@ binance.options({
 });
 
 const _getExchangePrices = assets =>
-new Promise((resolve, reject) => {
-  assets.map((assetObj) => {
-    console.log(JSON.stringify(assetObj, null, 2));
+  assets.reduce((a, assetObj) => {
     let binancePrices = {};
 
     binance.prices((tickers) => {
@@ -36,11 +34,11 @@ new Promise((resolve, reject) => {
     const marketSummary = assetObj.prices.reduce((acc, next) => {
       switch (next.exchange) {
         case 'bittrex': {
-          const bittrexRequest = new Promise((res) => {
+          const bittrexRequest = new Promise((resolve, reject) => {
             bbPromise.fromCallback(cb =>
               bittrexApi.getmarketsummary({ market: next.symbol }, cb)
             )
-            .then(res)
+            .then(resolve)
             .catch(reject);
           });
           acc.bittrexApiRequests.push(bittrexRequest);
@@ -60,28 +58,39 @@ new Promise((resolve, reject) => {
       bittrexApiRequests: [],
       partialAssetPrices: {},
     });
-    console.log('marketSummary: ', marketSummary);
 
-    return marketSummary;
-    /* getMarketSummary result =
-    {
-    MarketName: 'BTC-SALT',
-    High: 0.00096938,
-    Low: 0.00079153,
-    Volume: 1235298.63211953,
-    Last: 0.00090106,
-    BaseVolume: 1109.3424853,
-    TimeStamp: '2018-01-02T05:32:45.267',
-    Bid: 0.00089936,
-    Ask: 0.00090106,
-    OpenBuyOrders: 1660,
-    OpenSellOrders: 3754,
-    PrevDay: 0.000882,
-    Created: '2017-10-16T17:32:48.777'
-  }
-  */
+    a = {
+      bittrexApiRequests: [
+        ...a.bittrexApiRequests,
+        ...marketSummary.bittrexApiRequests,
+      ],
+      partialAssetPrices: {
+        ...a.partialAssetPrices,
+        ...marketSummary.bittrexApiRequests,
+      },
+    };
+    return a;
+  }, {
+    bittrexApiRequests: [],
+    partialAssetPrices: {},
   });
-});
+  /* getMarketSummary result =
+  {
+  MarketName: 'BTC-SALT',
+  High: 0.00096938,
+  Low: 0.00079153,
+  Volume: 1235298.63211953,
+  Last: 0.00090106,
+  BaseVolume: 1109.3424853,
+  TimeStamp: '2018-01-02T05:32:45.267',
+  Bid: 0.00089936,
+  Ask: 0.00090106,
+  OpenBuyOrders: 1660,
+  OpenSellOrders: 3754,
+  PrevDay: 0.000882,
+  Created: '2017-10-16T17:32:48.777'
+  */
+
 
 // const _getPortfolio = assets =>
 // assets.reduce((acc, n) => ({
@@ -98,47 +107,49 @@ new Promise((resolve, reject) => {
   let workingPrices = {};
   // const portfolio = _getPortfolio(assets);
 
-  _getExchangePrices(assets)
-  .then(({ bittrexApiRequests, partialAssetPrices }) => {
-    workingPrices = { ...partialAssetPrices };
-    return Promise.all([
-      ...bittrexApiRequests,
-    ]);
-  })
-  .then((results) => {
-    console.log('results: ', results);
-    let USD_BTC = '';
-
-    // a) iterate through bittrex results and extract USD value from each asset.
-    // b) add bittrex price to "updatedAsset" prices as a whole.
-    const prices = results
-    .map(({ result }) => {
-      console.log('bittrex result: ', result);
-      const
-        resultPrice = result[0].Last,
-
-        resultSymbol = result[0].MarketName,
-
-        updatedPrices = workingPrices[resultSymbol]
-        .prices
-        .map((priceObj) => {
-          if (priceObj.exchange === 'bittrex') priceObj.price = resultPrice;
-
-          return priceObj;
-        });
-      console.log('updatedPrices: ', updatedPrices);
-
-      if (resultSymbol === 'USDT-BTC') USD_BTC = resultPrice;
-
-      return ({
-        symbol: resultSymbol,
-        btcPrice: USD_BTC,
-        updatedPrices,
-      });
-    });
-    resolve(prices);
-  })
-  .catch(reject);
+  const x = _getExchangePrices(assets);
+  console.log('x: ', x);
+  // .then((x) => {
+  //   console.log('x: ', x);
+  //   workingPrices = { ...partialAssetPrices };
+  //   return Promise.all([
+  //     ...bittrexApiRequests,
+  //   ]);
+  // })
+  // .then((results) => {
+  //   console.log('results: ', results);
+  //   let USD_BTC = '';
+  //
+  //   // a) iterate through bittrex results and extract USD value from each asset.
+  //   // b) add bittrex price to "updatedAsset" prices as a whole.
+  //   const prices = results
+  //   .map(({ result }) => {
+  //     console.log('bittrex result: ', result);
+  //     const
+  //       resultPrice = result[0].Last,
+  //
+  //       resultSymbol = result[0].MarketName,
+  //
+  //       updatedPrices = workingPrices[resultSymbol]
+  //       .prices
+  //       .map((priceObj) => {
+  //         if (priceObj.exchange === 'bittrex') priceObj.price = resultPrice;
+  //
+  //         return priceObj;
+  //       });
+  //     console.log('updatedPrices: ', updatedPrices);
+  //
+  //     if (resultSymbol === 'USDT-BTC') USD_BTC = resultPrice;
+  //
+  //     return ({
+  //       symbol: resultSymbol,
+  //       btcPrice: USD_BTC,
+  //       updatedPrices,
+  //     });
+  //   });
+  //   resolve(prices);
+  // })
+  // .catch(reject);
 });
 
 // const rebalancePortfolio = (totalValue, portfolio) => {
