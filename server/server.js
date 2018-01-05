@@ -63,5 +63,5 @@ app.listen(PORT, err =>
   ==> 📡  Server @ ${PORT}
 `));
 mongoose.connect(MONGO, { useMongoClient: true }, err =>
-  process.stdout.write(err || `==> 📜  MONGO @ ${MONGO}
+  process.stdout.write(JSON.stringify(err) || `==> 📜  MONGO @ ${MONGO}
 `));

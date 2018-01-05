@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { MuiThemeProvider, getMuiTheme } from 'material-ui/styles';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import {
+  MuiThemeProvider,
+  // getMuiTheme,
+} from 'material-ui/styles';
+// import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import { AppBar } from 'material-ui';
 
 const App = ({ children }) => (
-  <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)} >
+  <MuiThemeProvider >
     <div>
       <AppBar title="Coin Hundred" />
       {children}

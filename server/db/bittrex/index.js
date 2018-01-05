@@ -3,7 +3,7 @@ import bittrexApi from 'node-bittrex-api';
 import { Promise as bbPromise } from 'bluebird';
 import folioRebalance from './helpers';
 
-console.log('%cbittrexApi', 'background:red;', bittrexApi);
+// console.log('%cbittrexApi', 'background:red;', bittrexApi);
 
 bittrexApi.options({
   apikey: process.env.BITTREX_API_KEY,

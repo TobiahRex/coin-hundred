@@ -25,10 +25,10 @@ const Things = ({ fetching, createThing, editThing, removeThing, things, apiStat
   return (
     <Card>
       <CardHeader title="Coin Hundred" subtitle="by @TobiahRex">
-        <InputNewThing {...propsInputNew} />
+        {/* <InputNewThing {...propsInputNew} /> */}
       </CardHeader>
       <CardText>
-        <ThingList {...propsThingList} />
+        {/* <ThingList {...propsThingList} /> */}
         <BittrexResult />
       </CardText>
     </Card>
