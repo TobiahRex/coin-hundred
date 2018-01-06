@@ -1,9 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import mongoose from 'mongoose';
 
-const pricesSchema = new mongoose.Schema({
+export const pricesSchema = new mongoose.Schema({
   symbol: String,
   marketName: String,
+  logoUrl: String,
   exchanges: {
     bittrex: {
       last: String,

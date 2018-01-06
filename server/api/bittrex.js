@@ -1,5 +1,5 @@
 import express from 'express';
-import Bittrex from '../db/bittrex';
+import Bittrex from '../db/models/bittrex';
 
 const router = new express.Router();
 

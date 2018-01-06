@@ -1,5 +1,8 @@
 import bittrexApi from 'node-bittrex-api';
 import binance from 'node-binance-api';
+import { pricesSchema } from '../schemas/prices';
+
+console.log('pricesSchema: ', pricesSchema);
 
 bittrexApi.options({
   apikey: process.env.BITTREX_API_KEY,
