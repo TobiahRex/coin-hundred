@@ -17,10 +17,10 @@ bittrexApi.options({
 pricesSchema.statics.getPrices = () => {
   Promise.all([
     _getBinancePrices(),
-    // _getBittrexPrices(),
+    _getBittrexPrices(),
   ])
   .then((prices) => {
-    console.log('prices: ', prices);
+    console.log('prices: ', prices[1]);
   })
   .catch((err) => {
     console.log('err: ', err);

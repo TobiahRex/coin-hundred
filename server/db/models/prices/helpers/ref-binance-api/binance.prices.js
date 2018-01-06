@@ -1,4 +1,5 @@
-const binancePrices = [
+/* eslint-disable no-unused-vars */
+const prices = [
   {
     123456: '0.00030000',
     ETHBTC: '0.05924700',
