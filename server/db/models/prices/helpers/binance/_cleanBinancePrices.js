@@ -22,13 +22,15 @@ const detectMajor = (major, symbol, prices) => {
 export const _cleanBinancePrices = prices =>
   Object.keys(prices)
   .map((symbol) => {
-    const majors = [
-      'ETH',
-      'BTC',
-      'BNB',
-      'USDT',
-    ];
-    .forEach((major) => detectMajor(major, symbol, prices))
+    const result = ['ETH', 'BTC', 'BNB', 'USDT']
+    .map(major => detectMajor(major, symbol, prices))
+    .reduce((acc, nextResult) => {
+      if (nextResult) {
+        acc = nextResult;
+      }
+      return acc;
+    }, {});
+    return result;
   });
 // export const _cleanBinancePrices = prices =>
 //   Object.keys(prices)
