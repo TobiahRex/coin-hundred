@@ -2,3 +2,7 @@
 export {
   _getBinancePrices,
 } from './_getBinancePrices';
+
+export {
+  _getBittrexPrices,
+} from './_getBittrexPrices';

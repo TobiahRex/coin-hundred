@@ -5,7 +5,7 @@ import { pricesSchema } from '../../schemas/prices';
 
 import {
   _getBinancePrices,
-  // _getBittrexPrices,
+  _getBittrexPrices,
 } from './helpers';
 
 bittrexApi.options({
