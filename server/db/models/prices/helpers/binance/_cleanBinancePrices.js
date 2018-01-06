@@ -1,278 +1,68 @@
 /* eslint-disable import/prefer-default-export */
-const symbols = [
-  '123456',
-  'ETHBTC',
-  'LTCBTC',
-  'BNBBTC',
-  'NEOBTC',
-  'QTUMETH',
-  'EOSETH',
-  'SNTETH',
-  'BNTETH',
-  'BCCBTC',
-  'GASBTC',
-  'BNBETH',
-  'BTCUSDT',
-  'ETHUSDT',
-  'HSRBTC',
-  'OAXETH',
-  'DNTETH',
-  'MCOETH',
-  'ICNETH',
-  'MCOBTC',
-  'WTCBTC',
-  'WTCETH',
-  'LRCBTC',
-  'LRCETH',
-  'QTUMBTC',
-  'YOYOBTC',
-  'OMGBTC',
-  'OMGETH',
-  'ZRXBTC',
-  'ZRXETH',
-  'STRATBTC',
-  'STRATETH',
-  'SNGLSBTC',
-  'SNGLSETH',
-  'BQXBTC',
-  'BQXETH',
-  'KNCBTC',
-  'KNCETH',
-  'FUNBTC',
-  'FUNETH',
-  'SNMBTC',
-  'SNMETH',
-  'NEOETH',
-  'IOTABTC',
-  'IOTAETH',
-  'LINKBTC',
-  'LINKETH',
-  'XVGBTC',
-  'XVGETH',
-  'CTRBTC',
-  'CTRETH',
-  'SALTBTC',
-  'SALTETH',
-  'MDABTC',
-  'MDAETH',
-  'MTLBTC',
-  'MTLETH',
-  'SUBBTC',
-  'SUBETH',
-  'EOSBTC',
-  'SNTBTC',
-  'ETCETH',
-  'ETCBTC',
-  'MTHBTC',
-  'MTHETH',
-  'ENGBTC',
-  'ENGETH',
-  'DNTBTC',
-  'ZECBTC',
-  'ZECETH',
-  'BNTBTC',
-  'ASTBTC',
-  'ASTETH',
-  'DASHBTC',
-  'DASHETH',
-  'OAXBTC',
-  'ICNBTC',
-  'BTGBTC',
-  'BTGETH',
-  'EVXBTC',
-  'EVXETH',
-  'REQBTC',
-  'REQETH',
-  'VIBBTC',
-  'VIBETH',
-  'HSRETH',
-  'TRXBTC',
-  'TRXETH',
-  'POWRBTC',
-  'POWRETH',
-  'ARKBTC',
-  'ARKETH',
-  'YOYOETH',
-  'XRPBTC',
-  'XRPETH',
-  'MODBTC',
-  'MODETH',
-  'ENJBTC',
-  'ENJETH',
-  'STORJBTC',
-  'STORJETH',
-  'BNBUSDT',
-  'VENBNB',
-  'YOYOBNB',
-  'POWRBNB',
-  'VENBTC',
-  'VENETH',
-  'KMDBTC',
-  'KMDETH',
-  'NULSBNB',
-  'RCNBTC',
-  'RCNETH',
-  'RCNBNB',
-  'NULSBTC',
-  'NULSETH',
-  'RDNBTC',
-  'RDNETH',
-  'RDNBNB',
-  'XMRBTC',
-  'XMRETH',
-  'DLTBNB',
-  'WTCBNB',
-  'DLTBTC',
-  'DLTETH',
-  'AMBBTC',
-  'AMBETH',
-  'AMBBNB',
-  'BCCETH',
-  'BCCUSDT',
-  'BCCBNB',
-  'BATBTC',
-  'BATETH',
-  'BATBNB',
-  'BCPTBTC',
-  'BCPTETH',
-  'BCPTBNB',
-  'ARNBTC',
-  'ARNETH',
-  'GVTBTC',
-  'GVTETH',
-  'CDTBTC',
-  'CDTETH',
-  'GXSBTC',
-  'GXSETH',
-  'NEOUSDT',
-  'NEOBNB',
-  'POEBTC',
-  'POEETH',
-  'QSPBTC',
-  'QSPETH',
-  'QSPBNB',
-  'BTSBTC',
-  'BTSETH',
-  'BTSBNB',
-  'XZCBTC',
-  'XZCETH',
-  'XZCBNB',
-  'LSKBTC',
-  'LSKETH',
-  'LSKBNB',
-  'TNTBTC',
-  'TNTETH',
-  'FUELBTC',
-  'FUELETH',
-  'MANABTC',
-  'MANAETH',
-  'BCDBTC',
-  'BCDETH',
-  'DGDBTC',
-  'DGDETH',
-  'IOTABNB',
-  'ADXBTC',
-  'ADXETH',
-  'ADXBNB',
-  'ADABTC',
-  'ADAETH',
-  'PPTBTC',
-  'PPTETH',
-  'CMTBTC',
-  'CMTETH',
-  'CMTBNB',
-  'XLMBTC',
-  'XLMETH',
-  'XLMBNB',
-  'CNDBTC',
-  'CNDETH',
-  'CNDBNB',
-  'LENDBTC',
-  'LENDETH',
-  'WABIBTC',
-  'WABIETH',
-  'WABIBNB',
-  'LTCETH',
-  'LTCUSDT',
-  'LTCBNB',
-  'TNBBTC',
-  'TNBETH',
-  'WAVESBTC',
-  'WAVESETH',
-  'WAVESBNB',
-  'GTOBTC',
-  'GTOETH',
-  'GTOBNB',
-  'ICXBTC',
-  'ICXETH',
-  'ICXBNB',
-  'OSTBTC',
-  'OSTETH',
-  'OSTBNB',
-  'ELFBTC',
-  'ELFETH',
-  'AIONBTC',
-  'AIONETH',
-  'AIONBNB',
-  'NEBLBTC',
-  'NEBLETH',
-  'NEBLBNB',
-  'BRDBTC',
-  'BRDETH',
-  'BRDBNB',
-  'MCOBNB',
-  'EDOBTC',
-  'EDOETH',
-  'WINGSBTC',
-  'WINGSETH',
-  'NAVBTC',
-  'NAVETH',
-  'NAVBNB',
-  'LUNBTC',
-  'LUNETH',
-  'TRIGBTC',
-  'TRIGETH',
-  'TRIGBNB',
-  'APPCBTC',
-  'APPCETH',
-  'APPCBNB',
-];
+export const _cleanBinancePrices = prices =>
+  Object.keys(prices)
+  .map((symbol) => {
+    const price = prices[symbol];
 
-const _cleanBinancePrices = prices =>
-  prices.map((symbol) => {
     const btcStart = symbol.indexOf('BTC');
     const ethStart = symbol.indexOf('ETH');
     const usdtStart = symbol.indexOf('USDT');
     const bnbStart = symbol.indexOf('BNB');
-    let mysterySym = '';
+    let cleanSymbol = '';
 
     if (btcStart) {
       if (btcStart > 0) {
-        mysterySym = `${symbol.slice(0, btcStart)}-BTC`;
+        cleanSymbol = `${symbol.slice(0, btcStart)}-BTC`;
       } else {
-        mysterySym = `BTC-${symbol.slice(3)}`;
+        cleanSymbol = `BTC-${symbol.slice(3)}`;
       }
     } else if (ethStart) {
       if (ethStart > 0) {
-        mysterySym = `${symbol.slice(0, ethStart)}-ETH`;
+        cleanSymbol = `${symbol.slice(0, ethStart)}-ETH`;
       } else {
-        mysterySym = `ETH-${symbol.slice(3)}`;
+        cleanSymbol = `ETH-${symbol.slice(3)}`;
       }
     } else if (usdtStart) {
       if (usdtStart > 0) {
-        mysterySym = `${symbol.slice(0, usdtStart)}-USDT`;
+        cleanSymbol = `${symbol.slice(0, usdtStart)}-USDT`;
       } else {
-        mysterySym = `USDT-${symbol.slice(3)}`;
+        cleanSymbol = `USDT-${symbol.slice(3)}`;
       }
     } else if (bnbStart) {
       if (bnbStart > 0) {
-        mysterySym = `${symbol.slice(0, bnbStart)}-BNB`;
+        cleanSymbol = `${symbol.slice(0, bnbStart)}-BNB`;
       } else {
-        mysterySym = `BNB-${symbol.slice(3)}`;
+        cleanSymbol = `BNB-${symbol.slice(3)}`;
       }
     }
-    return mysterySym;
+    return ({
+      symbol: cleanSymbol,
+      last: price,
+    });
   });
-  // return Object.keys(prices).map(symbolKey => {});
 
-console.log(_cleanBinancePrices(symbols));
+const detectMajor = (major, symbol, prices) => {
+  const price = prices[symbol];
+  const majorStart = symbol.indexOf(major);
+  let cleanSymbol = '';
+  if (majorStart) {
+    if (majorStart > 0) {
+      cleanSymbol = `${symbol.slice(0, majorStart)}-${major}`;
+    } else {
+      cleanSymbol = `${major}-${symbol.slice(3)}`;
+    }
+  } else {
+    return null;
+  }
+  return ({
+    symbol: cleanSymbol,
+    last: price,
+  });
+};
+
+const funcs = [
+  detectMajor,
+  'detectBTC',
+  'detectBNB',
+  'detectUSDT',
+];
