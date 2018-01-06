@@ -118,7 +118,7 @@ new Promise((resolve, reject) => {
       return ({
         symbol: resultSymbol,
         btcPrice: USD_BTC,
-        workingPrices,
+        updatedPrices,
       });
     });
     resolve(prices);
