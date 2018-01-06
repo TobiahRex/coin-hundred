@@ -1,12 +1,12 @@
+/* eslint-disable import/prefer-default-export */
 import bittrexApi from 'node-bittrex-api';
-import { pricesSchema } from '../schemas/prices';
+import mongoose from 'mongoose';
+import { pricesSchema } from '../../schemas/prices';
 
 import {
   _getBinancePrices,
   // _getBittrexPrices,
 } from './helpers';
-
-console.log('pricesSchema: ', pricesSchema);
 
 bittrexApi.options({
   apikey: process.env.BITTREX_API_KEY,
@@ -24,5 +24,7 @@ pricesSchema.statics.getPrices = () => {
   })
   .catch((err) => {
     console.log('err: ', err);
-  })
-}
+  });
+};
+
+export const Prices = mongoose.model('Prices', pricesSchema);
