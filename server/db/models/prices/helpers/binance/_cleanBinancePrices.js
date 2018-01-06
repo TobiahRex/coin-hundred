@@ -1,37 +1,41 @@
 /* eslint-disable import/prefer-default-export */
+export const _cleanBinancePrices = prices =>
+  Object
+  .keys(prices)
+  .map((symbol) => {
+    const result = [
+      'ETH', 'BTC', 'BNB', 'USDT',
+    ]
+    .map(major => clean(major, symbol, prices))
+    .reduce((acc, nextResult) => {
+      if (nextResult && typeof nextResult !== object) {
+        acc = nextResult;
+      }
+      return acc;
+    }, {});
 
-const detectMajor = (major, symbol, prices) => {
-  const price = prices[symbol];
-  const majorStart = symbol.indexOf(major);
+    return result;
+  });
+
+function clean(major, symbol, prices) {
   let cleanSymbol = '';
+  const
+    price = prices[symbol],
+    majorStart = symbol.indexOf(major);
+
   if (majorStart) {
     if (majorStart > 0) {
       cleanSymbol = `${symbol.slice(0, majorStart)}-${major}`;
     } else {
       cleanSymbol = `${major}-${symbol.slice(3)}`;
     }
-  } else {
-    return null;
-  }
+  } else return null;
+
   return ({
     symbol: cleanSymbol,
     last: price,
   });
-};
-
-export const _cleanBinancePrices = prices =>
-  Object.keys(prices)
-  .map((symbol) => {
-    const result = ['ETH', 'BTC', 'BNB', 'USDT']
-    .map(major => detectMajor(major, symbol, prices))
-    .reduce((acc, nextResult) => {
-      if (nextResult) {
-        acc = nextResult;
-      }
-      return acc;
-    }, {});
-    return result;
-  });
+}
 // export const _cleanBinancePrices = prices =>
 //   Object.keys(prices)
 //   .map((symbol) => {
