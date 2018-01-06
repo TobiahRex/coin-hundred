@@ -1,12 +1,16 @@
 /* eslint-disable import/prefer-default-export */
-import binance from 'node-binance-api';
+import { Promise as bbPromise } from 'bluebird';
+import bittrexApi from 'node-bittrex-api';
 
-binance.options({
-  APIKEY: process.env.BINANCE_API_KEY,
-  APISECRET: process.env.BINANCE_API_SECRET,
+bittrexApi.options({
+  apikey: process.env.BITTREX_API_KEY,
+  apisecret: process.env.BITTREX_API_SECRET,
+  inverse_callback_arguments: true,
 });
 
-export const _getBinancePrices = () =>
-  new Promise((resolve) => {
-    binance.prices(resolve);
+export const _getBittrexPrices = () =>
+  new Promise((resolve, reject) => {
+    bbPromise.fromCallback(cb => bittrexApi.getmarketsummaries(cb))
+    .then(resolve)
+    .catch(reject);
   });
