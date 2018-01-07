@@ -6,6 +6,7 @@ import { pricesSchema } from '../../schemas/prices';
 import {
   _getBinancePrices,
   _getBittrexPrices,
+  _cleanBinancePrices,
 } from './helpers';
 
 bittrexApi.options({
@@ -20,7 +21,8 @@ pricesSchema.statics.getPrices = () => {
     _getBittrexPrices(),
   ])
   .then((prices) => {
-    console.log('prices: ', prices[1]);
+    const cleanBinancePrices = _cleanBinancePrices(prices[0]);
+    console.log('cleanBinancePrices: ', JSON.stringify(cleanBinancePrices, null, 2));
   })
   .catch((err) => {
     console.log('err: ', err);

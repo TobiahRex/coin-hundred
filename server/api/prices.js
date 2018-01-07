@@ -8,4 +8,4 @@ import { Prices } from '../db/models/prices';
 // });
 //
 // export default router;
-console.log(Prices.getPrices());
+Prices.getPrices();

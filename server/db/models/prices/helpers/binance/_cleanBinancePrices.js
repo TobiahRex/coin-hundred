@@ -25,17 +25,17 @@ export const _cleanBinancePrices = prices =>
   Object
   .keys(prices)
   .map((symbol) => {
+    const 
     const result = [
       'ETH', 'BTC', 'BNB', 'USDT',
     ]
     .map(major => clean(major, symbol, prices))
     .reduce((acc, nextResult) => {
-      if (nextResult && typeof nextResult !== 'object') {
-        acc = nextResult;
-      }
-      return acc;
-    }, {});
+      if (nextResult) acc.push(nextResult);
 
+      return acc;
+    }, []);
+    console.log('result: ', result);
     return result;
   })
   .reduce((acc, nextPriceObj) => {
