@@ -1,4 +1,25 @@
 /* eslint-disable import/prefer-default-export */
+/**
+  * function: _cleanBinancePrices
+  * 1) receive api response object of prices as @param.
+  * 2a) map over keys (symbols) and insert symbol into "clean()" as arg 2.
+  * 2b) simultaneously map over the 4 base currencies, per symbol and insert into "clean()" as arg 1.
+  * 3) "clean()" will return an array per base currency.  All but 1 of the results will be null.  Reduce this array...
+  * 4) Reduce results into a single object result as array input.
+  * 5) Further reduce the single object per symbol, form an array into a final object with the format...
+    {
+      [symbol]: {
+        symbol: 'BTC-1ST',
+        last: '0.234234234',
+      },
+      ...x more results,
+    }
+  *
+  * @param {object} prices - api response object.
+  *
+  * @return {object} - clean prices objects.
+*/
+
 export const _cleanBinancePrices = prices =>
   Object
   .keys(prices)
@@ -17,7 +38,13 @@ export const _cleanBinancePrices = prices =>
     return result;
   })
   .reduce((acc, nextPriceObj) => {
-    
+    acc = {
+      ...acc,
+      [nextPriceObj.symbol]: {
+        ...nextPriceObj,
+      },
+    };
+    return acc;
   }, {});
 
 function clean(major, symbol, prices) {
