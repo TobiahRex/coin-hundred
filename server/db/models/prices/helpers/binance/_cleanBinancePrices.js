@@ -25,37 +25,45 @@ export const _cleanBinancePrices = prices =>
   Object
   .keys(prices)
   .map((symbol) => {
-    const 
     const result = [
       'ETH', 'BTC', 'BNB', 'USDT',
     ]
     .map(major => clean(major, symbol, prices))
     .reduce((acc, nextResult) => {
-      if (nextResult) acc.push(nextResult);
+      if (nextResult) acc = nextResult;
 
       return acc;
-    }, []);
-    console.log('result: ', result);
+    }, {});
     return result;
   })
   .reduce((acc, nextPriceObj) => {
-    acc = {
-      ...acc,
-      [nextPriceObj.symbol]: {
-        ...nextPriceObj,
-      },
-    };
+    if (Object.keys(acc).length) {
+      acc = {
+        ...acc,
+        [nextPriceObj.symbol]: {
+          ...nextPriceObj,
+        },
+      };
+    } else {
+      acc = ({
+        [nextPriceObj.symbol]: {
+          ...nextPriceObj,
+        },
+      });
+    }
     return acc;
-  }, {});
+  });
 
   /**
     * function: clean
+    * 0) If invalid symbol immediately return {null}.
     * 1) save actual floating price value to "price".
     * 2) find index inside symbol string 'BTC1ST', of first occurance for "major" currency, e.g. one of ['BTC', 'ETH', 'USDT', 'BNB'].
     * 3) evaluate truthyness of step 2.
     * 4a) if found, assign "cleanSymbol" as properly formatted string 'BTC-1ST' or '1ST-BTC'.
     * 4b) if NOT found, assign "cleanSymbol" as {null}.
-    * 5) Return {objet} with "cleanSymbol" and "prices" respectively.
+    * 5) if the original symbol does not match the clean symbol - due to other "major" currency matches, return null.
+    * 6) Return {objet} with "cleanSymbol" and "prices" respectively.
     *
     * @param {string} major - one of ['BTC', 'ETH', 'USDT', 'BNB'].
     * @param {string} symbol - unclean symbol, e.g. 'BTC1ST'.
@@ -64,7 +72,10 @@ export const _cleanBinancePrices = prices =>
     * @return {object} - clean prices objects.
   */
 function clean(major, symbol, prices) {
-  let cleanSymbol = '';
+  if (!symbol) return null;
+
+  let
+    cleanSymbol = '';
   const
     price = prices[symbol],
     majorStart = symbol.indexOf(major);
@@ -76,6 +87,10 @@ function clean(major, symbol, prices) {
       cleanSymbol = `${major}-${symbol.slice(3)}`;
     }
   } else return null;
+
+  if (symbol !== cleanSymbol.split('-').join('')) {
+    return null;
+  }
 
   return ({
     symbol: cleanSymbol,
