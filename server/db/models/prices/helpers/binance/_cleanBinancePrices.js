@@ -47,6 +47,15 @@ export const _cleanBinancePrices = prices =>
     return acc;
   }, {});
 
+  /**
+    * function: clean
+    * 1) save actual floating price value to "price".
+    * 2) find index inside symbol string 'BTC1ST', of first occurance for "major" currency ['BTC', 'ETH', 'USDT', 'BNB'].
+    *
+    * @param {object} prices - api response object.
+    *
+    * @return {object} - clean prices objects.
+  */
 function clean(major, symbol, prices) {
   let cleanSymbol = '';
   const
