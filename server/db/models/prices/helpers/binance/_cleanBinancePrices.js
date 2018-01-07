@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+
 /**
   * function: _cleanBinancePrices
   * 1) receive api response object of prices as @param.
@@ -50,9 +51,9 @@ export const _cleanBinancePrices = prices =>
   /**
     * function: clean
     * 1) save actual floating price value to "price".
-    * 2) find index inside symbol string 'BTC1ST', of first occurance for "major" currency ['BTC', 'ETH', 'USDT', 'BNB'].
+    * 2) find index inside symbol string 'BTC1ST', of first occurance for "major" currency, e.g. one of ['BTC', 'ETH', 'USDT', 'BNB'].
     * 3) evaluate truthyness of step 2.
-    * 4a) if found, assign "cleanSymbol" as properly formatted string 'BTC-1ST'.
+    * 4a) if found, assign "cleanSymbol" as properly formatted string 'BTC-1ST' or '1ST-BTC'.
     * 4b) if NOT found, assign "cleanSymbol" as {null}.
     * 5) Return {objet} with "cleanSymbol" and "prices" respectively.
     *

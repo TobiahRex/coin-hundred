@@ -1,7 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 export {
   _getBinancePrices,
-} from './binance/_getBinancePrices';
+  _cleanBinancePrices,
+} from './binance';
 
 export {
   _getBittrexPrices,
