@@ -51,8 +51,14 @@ export const _cleanBinancePrices = prices =>
     * function: clean
     * 1) save actual floating price value to "price".
     * 2) find index inside symbol string 'BTC1ST', of first occurance for "major" currency ['BTC', 'ETH', 'USDT', 'BNB'].
+    * 3) evaluate truthyness of step 2.
+    * 4a) if found, assign "cleanSymbol" as properly formatted string 'BTC-1ST'.
+    * 4b) if NOT found, assign "cleanSymbol" as {null}.
+    * 5) Return {objet} with "cleanSymbol" and "prices" respectively.
     *
-    * @param {object} prices - api response object.
+    * @param {string} major - one of ['BTC', 'ETH', 'USDT', 'BNB'].
+    * @param {string} symbol - unclean symbol, e.g. 'BTC1ST'.
+    * @param {object} prices - binance api response for prices.
     *
     * @return {object} - clean prices objects.
   */
