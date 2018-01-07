@@ -8,14 +8,17 @@ export const _cleanBinancePrices = prices =>
     ]
     .map(major => clean(major, symbol, prices))
     .reduce((acc, nextResult) => {
-      if (nextResult && typeof nextResult !== object) {
+      if (nextResult && typeof nextResult !== 'object') {
         acc = nextResult;
       }
       return acc;
     }, {});
 
     return result;
-  });
+  })
+  .reduce((acc, nextPriceObj) => {
+    
+  }, {});
 
 function clean(major, symbol, prices) {
   let cleanSymbol = '';
