@@ -6,4 +6,5 @@ export {
 
 export {
   _getBittrexPrices,
-} from './bittrex/_getBittrexPrices';
+  _cleanBittrexPrices,
+} from './bittrex';
