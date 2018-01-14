@@ -61,6 +61,20 @@ marketsSchema.statics.findMarket = marketObj =>
     .catch(reject);
   });
 
+marketsSchema.statics.createMarket = marketObj =>
+  new Promise((resolve, reject) => {
+    if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj" to @func "createMarket".');
+    if (marketObj && typeof marketObj !== 'object') reject('Must supply an {object} for @param "marketObj" to @func "createMarket".');
+
+    Markets
+    .create({ ...marketObj.market })
+    .then((newMarket) => {
+      if ('_id' in newMarket) resolve();
+      else reject('FAILED: @func "createMarket".');
+    })
+    .catch(reject);
+  });
+
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
 new Promise((resolve, reject) => {
   // iterate through bittrex & binance and check for existing documents.
