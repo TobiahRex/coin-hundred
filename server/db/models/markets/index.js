@@ -74,6 +74,16 @@ new Promise((resolve, reject) => {
       // If yes, update.
     });
   });
+
+  Promise.all([
+    ...lookupRequests,
+  ])
+  .then((results) => {
+    results.map(({  }) => {
+
+    })
+  })
+  .catch(reject);
 });
 
 export const Markets = mongoose.model('Markets', marketsSchema);
