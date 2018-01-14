@@ -43,11 +43,20 @@ marketsSchema.statics.findMarket = marketObj =>
     if (marketObj && typeof marketObj !== 'object') reject('Must supply an object for @param "marketObj".');
 
     Markets
-    .findOne(market)
+    .findOne(marketObj.symbol)
     .exec()
     .then((dbMarket) => {
-      if (dbMarket) resolve({ result: true, symbol: market });
-      else resolve({ result: false, symbol: market });
+      if ('_id' in dbMarket) {
+        resolve({
+          result: true,
+          market: { ...marketObj },
+        });
+      } else {
+        resolve({
+          result: false,
+          market: { ...marketObj },
+        });
+      }
     })
     .catch(reject);
   });
