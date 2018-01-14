@@ -95,6 +95,7 @@ function clean(major, symbol, prices) {
   return ({
     symbol: cleanSymbol,
     last: price,
+    exchange: 'binance',
     timeStamp: new Date(),
   });
 }
