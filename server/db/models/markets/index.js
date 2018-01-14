@@ -79,7 +79,23 @@ marketsSchema.statics.createMarket = marketObj =>
 
 marketsSchema.statics.findMarketAndUpdate = marketObj =>
   new Promise((resolve, reject) => {
-    
+    if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj" to @func "createMarket".');
+    if (marketObj && typeof marketObj !== 'object') reject('Must supply an {object} for @param "marketObj" to @func "createMarket".');
+
+    Markets
+    .findOne({ symbol: marketObj.symbol })
+    .exec()
+    .then((dbMarket) => {
+      if (!('_id' in dbMarket)) {
+        reject(`FAILED: Could not find market to update: "${marketObj.symbol}"`);
+      } else {
+        return dbMarket.save({ new: true });
+      }
+    })
+    .then((updatedMarket) => {
+      
+    })
+    .catch(reject);
   });
 
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
