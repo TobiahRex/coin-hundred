@@ -37,6 +37,18 @@ marketsSchema.statics.getPrices = () => {
   });
 };
 
+marketsSchema.statics.findMarket = market =>
+  new Promise((resolve, reject) => {
+    Markets
+    .findOne(market)
+    .exec()
+    .then((dbMarket) => {
+      if (dbMarket) resolve(true);
+      else resolve(false);
+    })
+    .catch(reject)
+  });
+
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
 new Promise((resolve, reject) => {
   // iterate through bittrex & binance and check for existing documents.
@@ -46,7 +58,19 @@ new Promise((resolve, reject) => {
   Object
   .keys(exchanges)
   .forEach((exchangeKey) => {
-    
+    const markets = exchanges[exchangeKey];
+    Object
+    .keys(markets)
+    .forEach((marketKey) => {
+      // Find if the symbol already exists.
+      Markets
+      .findOne(marketKey)
+      .exec()
+      .then(resolve)
+      .catch(reject)
+      // If not, create.
+      // If yes, update.
+    });
   });
 });
 
