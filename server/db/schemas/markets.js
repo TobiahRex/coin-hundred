@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import mongoose from 'mongoose';
 
-export const pricesSchema = new mongoose.Schema({
+export const marketsSchema = new mongoose.Schema({
   symbol: String,
   marketName: String,
   logoUrl: String,

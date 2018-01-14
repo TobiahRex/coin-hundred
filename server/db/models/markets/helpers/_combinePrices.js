@@ -10,17 +10,17 @@
   * @return {object} - clean prices objects.
 */
 
-export const _combinePrices = prices => {
+export const _combinePrices = (prices) => {
   const memo = {};
-  prices.forEach((priceObj) => {
-    
-  })
-
-  Object.keys((symbolKey) => {
-    if (!memo[symbolKey]) {
-      memo[symbolKey] = {
+  Object
+  .keys(prices)
+  .sort()
+  .forEach((symbolKey) => {
+    if (!(symbolKey in memo)) {
+      memo[symbolKey] = ({
         ...prices[symbolKey],
-      };
+      });
     }
-  })
+  });
+  return memo;
 };
