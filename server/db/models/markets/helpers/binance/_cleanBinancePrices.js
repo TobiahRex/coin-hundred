@@ -95,5 +95,6 @@ function clean(major, symbol, prices) {
   return ({
     symbol: cleanSymbol,
     last: price,
+    timeStamp: new Date(),
   });
 }

@@ -18,7 +18,7 @@ export const _cleanBittrexPrices = prices =>
         [MarketName]: {
           symbol: MarketName,
           last: Last,
-          date: new Date(),
+          timeStamp: new Date(),
         },
       });
     } else {
@@ -26,7 +26,7 @@ export const _cleanBittrexPrices = prices =>
         [MarketName]: {
           symbol: MarketName,
           last: Last,
-          date: new Date(),
+          timeStamp: new Date(),
         },
       });
     }
