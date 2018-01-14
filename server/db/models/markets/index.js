@@ -37,10 +37,10 @@ marketsSchema.statics.getPrices = () => {
   });
 };
 
-marketsSchema.statics.findMarket = market =>
+marketsSchema.statics.findMarket = marketObj =>
   new Promise((resolve, reject) => {
-    if (!market) reject('Must supply required @param "market".');
-    if (typeof market !== 'string') reject('Must supply a string for @param "market".');
+    if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj".');
+    if (marketObj && typeof marketObj !== 'object') reject('Must supply an object for @param "marketObj".');
 
     Markets
     .findOne(market)
@@ -59,11 +59,17 @@ new Promise((resolve, reject) => {
   // if is found, update existing document's price with current price.
 
   const lookupRequests = [];
+  let markets = {};
 
   Object
   .keys(exchanges)
   .forEach((exchangeKey) => {
-    const markets = exchanges[exchangeKey];
+    markets = {
+      ...markets,
+      [exchangeKey]: {
+        ...exchanges[exchangeKey],
+      },
+    };
 
     Object
     .keys(markets)
@@ -75,12 +81,16 @@ new Promise((resolve, reject) => {
     });
   });
 
+  const
+    createRequests = [],
+    updateRequests = [];
+
   Promise.all([
     ...lookupRequests,
   ])
   .then((results) => {
-    results.map(({  }) => {
-
+    results.map(({ result, symbol }) => {
+      if (!result)
     })
   })
   .catch(reject);
