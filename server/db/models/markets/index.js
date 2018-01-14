@@ -85,16 +85,18 @@ marketsSchema.statics.findMarketAndUpdate = marketObj =>
     Markets
     .findOne({ symbol: marketObj.symbol })
     .exec()
-    .then((dbMarket) => {
+    .then((dbMarket) => { // eslint-disable-line consistent-return
       if (!('_id' in dbMarket)) {
         reject(`FAILED: Could not find market to update: "${marketObj.symbol}"`);
       } else {
+        dbMarket.last = marketObj.last;
+        dbMarket.timeStamp = marketObj.timeStamp;
+        dbMarket.exchange = marketObj.exchange;
+
         return dbMarket.save({ new: true });
       }
     })
-    .then((updatedMarket) => {
-      
-    })
+    .then(resolve)
     .catch(reject);
   });
 
@@ -105,20 +107,14 @@ new Promise((resolve, reject) => {
   // if is found, update existing document's price with current price.
 
   const lookupRequests = [];
-  let markets = {};
 
   Object
   .keys(exchanges)
   .forEach((exchangeKey) => {
-    markets = {
-      ...markets,
-      [exchangeKey]: {
-        ...exchanges[exchangeKey],
-      },
-    };
+    const market = exchanges[exchangeKey];
 
     Object
-    .keys(markets)
+    .keys(market)
     .forEach((marketKey) => {
       lookupRequests.push(Markets.findMarket(marketKey));
     });
@@ -128,9 +124,9 @@ new Promise((resolve, reject) => {
     ...lookupRequests,
   ])
   .then((results) => {
-    const createOrUpdateReqs = results.map(({ result, symbol }) => {
-      if (result) return Markets.updateMarket(markets[symbol]);
-      return Markets.createMarket(markets[symbol]);
+    const createOrUpdateReqs = results.map(({ result, market }) => {
+      if (result) return Markets.updateMarket(market);
+      return Markets.createMarket(market);
     });
     return Promise.all(createOrUpdateReqs);
   })
