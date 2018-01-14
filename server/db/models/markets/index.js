@@ -39,14 +39,17 @@ marketsSchema.statics.getPrices = () => {
 
 marketsSchema.statics.findMarket = market =>
   new Promise((resolve, reject) => {
+    if (!market) reject('Must supply required @param "market".');
+    if (typeof market !== 'string') reject('Must supply a string for @param "market".');
+
     Markets
     .findOne(market)
     .exec()
     .then((dbMarket) => {
-      if (dbMarket) resolve(true);
-      else resolve(false);
+      if (dbMarket) resolve({ result: true, symbol: market });
+      else resolve({ result: false, symbol: market });
     })
-    .catch(reject)
+    .catch(reject);
   });
 
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
@@ -55,19 +58,18 @@ new Promise((resolve, reject) => {
   // if none is found, create a new one.
   // if is found, update existing document's price with current price.
 
+  const lookupRequests = [];
+
   Object
   .keys(exchanges)
   .forEach((exchangeKey) => {
     const markets = exchanges[exchangeKey];
+
     Object
     .keys(markets)
     .forEach((marketKey) => {
       // Find if the symbol already exists.
-      Markets
-      .findOne(marketKey)
-      .exec()
-      .then(resolve)
-      .catch(reject)
+      lookupRequests.push(Markets.findMarket(marketKey));
       // If not, create.
       // If yes, update.
     });
