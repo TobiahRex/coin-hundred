@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export, no-use-before-define */
 import bittrexApi from 'node-bittrex-api';
 import mongoose from 'mongoose';
+import { Promise as bbPromise } from 'bluebird';
 import { marketsSchema } from '../../schemas/markets';
 
 import {
@@ -66,13 +67,19 @@ marketsSchema.statics.createMarket = marketObj =>
     if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj" to @func "createMarket".');
     if (marketObj && typeof marketObj !== 'object') reject('Must supply an {object} for @param "marketObj" to @func "createMarket".');
 
-    Markets
-    .create({ ...marketObj.market })
+    bbPromise.fromCallback(cb =>
+      Markets.create({ ...marketObj.market }, cb)
+    )
     .then((newMarket) => {
       if ('_id' in newMarket) resolve();
       else reject('FAILED: @func "createMarket".');
     })
     .catch(reject);
+  });
+
+marketsSchema.statics.findMarketAndUpdate = marketObj =>
+  new Promise((resolve, reject) => {
+    
   });
 
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
