@@ -74,24 +74,22 @@ new Promise((resolve, reject) => {
     Object
     .keys(markets)
     .forEach((marketKey) => {
-      // Find if the symbol already exists.
       lookupRequests.push(Markets.findMarket(marketKey));
-      // If not, create.
-      // If yes, update.
     });
   });
-
-  const
-    createRequests = [],
-    updateRequests = [];
 
   Promise.all([
     ...lookupRequests,
   ])
   .then((results) => {
-    results.map(({ result, symbol }) => {
-      if (!result)
-    })
+    const createOrUpdateReqs = results.map(({ result, symbol }) => {
+      if (result) return Markets.updateMarket(markets[symbol]);
+      return Markets.createMarket(markets[symbol]);
+    });
+    return Promise.all(createOrUpdateReqs);
+  })
+  .then(() => {
+    console.log('finished updated or creating markets.');
   })
   .catch(reject);
 });
