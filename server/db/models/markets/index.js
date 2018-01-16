@@ -38,10 +38,48 @@ marketsSchema.statics.getPrices = () => {
   });
 };
 
-marketsSchema.statics.findMarket = marketObj =>
+marketsSchema.statics.createMarket = marketObj =>
   new Promise((resolve, reject) => {
-    if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj".');
-    if (marketObj && typeof marketObj !== 'object') reject('Must supply an object for @param "marketObj".');
+    if (!('symbol' in marketObj)) reject('FAILED: @Markets.createMarket - Must supply required param "marketObj".');
+    if (marketObj && typeof marketObj !== 'object') reject('FAILED:  @Markets.createMarket - Must supply an {object} for param "marketObj".');
+
+    bbPromise.fromCallback(cb =>
+      Markets.create({ ...marketObj.market }, cb)
+    )
+    .then((newMarket) => {
+      if ('_id' in newMarket) resolve();
+      else reject('FAILED: @func "createMarket".');
+    })
+    .catch(reject);
+  });
+
+marketsSchema.statics.findMarketAndUpdate = marketObj =>
+  new Promise((resolve, reject) => {
+    if (!('symbol' in marketObj)) reject('FAILED: @Markets.findMarketAndUpdate - Must supply required param "marketObj".');
+    if (marketObj && typeof marketObj !== 'object') reject('FAILED:  @Markets.findMarketAndUpdate - Must supply an {object} for param "marketObj".');
+
+    Markets
+    .findOne({ symbol: marketObj.symbol })
+    .exec()
+    .then((dbMarket) => { // eslint-disable-line consistent-return
+      if (!('_id' in dbMarket)) {
+        reject(`FAILED: Could not find market to update: "${marketObj.symbol}"`);
+      } else {
+        dbMarket.last = marketObj.last;
+        dbMarket.timeStamp = marketObj.timeStamp;
+        dbMarket.exchange = marketObj.exchange;
+
+        return dbMarket.save({ new: true });
+      }
+    })
+    .then(resolve)
+    .catch(reject);
+  });
+
+marketsSchema.statics.dbLookup = marketObj =>
+  new Promise((resolve, reject) => {
+    if (!('symbol' in marketObj)) reject('FAILED: @Markets.dbLookup - Must supply required param "marketObj".');
+    if (marketObj && typeof marketObj !== 'object') reject('FAILED:  @Markets.dbLookup - Must supply an {object} for param "marketObj".');
 
     Markets
     .findOne(marketObj.symbol)
@@ -62,44 +100,6 @@ marketsSchema.statics.findMarket = marketObj =>
     .catch(reject);
   });
 
-marketsSchema.statics.createMarket = marketObj =>
-  new Promise((resolve, reject) => {
-    if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj" to @func "createMarket".');
-    if (marketObj && typeof marketObj !== 'object') reject('Must supply an {object} for @param "marketObj" to @func "createMarket".');
-
-    bbPromise.fromCallback(cb =>
-      Markets.create({ ...marketObj.market }, cb)
-    )
-    .then((newMarket) => {
-      if ('_id' in newMarket) resolve();
-      else reject('FAILED: @func "createMarket".');
-    })
-    .catch(reject);
-  });
-
-marketsSchema.statics.findMarketAndUpdate = marketObj =>
-  new Promise((resolve, reject) => {
-    if (!Object.keys(marketObj).length) reject('Must supply required @param "marketObj" to @func "createMarket".');
-    if (marketObj && typeof marketObj !== 'object') reject('Must supply an {object} for @param "marketObj" to @func "createMarket".');
-
-    Markets
-    .findOne({ symbol: marketObj.symbol })
-    .exec()
-    .then((dbMarket) => { // eslint-disable-line consistent-return
-      if (!('_id' in dbMarket)) {
-        reject(`FAILED: Could not find market to update: "${marketObj.symbol}"`);
-      } else {
-        dbMarket.last = marketObj.last;
-        dbMarket.timeStamp = marketObj.timeStamp;
-        dbMarket.exchange = marketObj.exchange;
-
-        return dbMarket.save({ new: true });
-      }
-    })
-    .then(resolve)
-    .catch(reject);
-  });
-
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
 new Promise((resolve, reject) => {
   // iterate through bittrex & binance and check for existing documents.
@@ -111,12 +111,12 @@ new Promise((resolve, reject) => {
   Object
   .keys(exchanges)
   .forEach((exchangeKey) => {
-    const market = exchanges[exchangeKey];
+    const markets = exchanges[exchangeKey];
 
     Object
-    .keys(market)
+    .keys(markets)
     .forEach((marketKey) => {
-      lookupRequests.push(Markets.findMarket(marketKey));
+      lookupRequests.push(Markets.dbLookup(markets[marketKey]));
     });
   });
 
