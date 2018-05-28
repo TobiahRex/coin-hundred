@@ -18,21 +18,19 @@ bittrexApi.options({
   inverse_callback_arguments: true,
 });
 
-marketsSchema.statics.getPrices = () =>
-new Promise((resolve, reject) => {
+marketsSchema.statics.getPrices = cb =>
   Promise.all([
     _getBinancePrices(),
     _getBittrexPrices(),
   ])
-  .then((prices) => Markets.createOrUpdateMarketDocs({
+  .then(prices => Markets.createOrUpdateMarketDocs({
     exchanges: {
       binance: _cleanBinancePrices(prices[0]),
       bittrex: _cleanBittrexPrices(prices[1].result),
     },
   }))
-  .then(resolve)
-  .catch(reject);
-})
+  .then(result => cb(null, result))
+  .catch(cb);
 
 marketsSchema.statics.createMarket = marketObj =>
   new Promise((resolve, reject) => {
@@ -129,10 +127,7 @@ new Promise((resolve, reject) => {
     });
     return Promise.all(reqCollection);
   })
-  .then((result) => {
-    console.log('result: ', result);
-    resolve();
-  })
+  .then(resolve)
   .catch(reject);
 });
 
