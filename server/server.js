@@ -12,9 +12,9 @@ import devMiddleware from 'webpack-dev-middleware';
 import webpackConfig from '../webpack.config';
 import api from './api';
 
-mongoose.Promise = Promise;
+mongoose.Promise = global.Promise;
 const PORT = process.env.PORT || 3000;
-const MONGO = process.env.MONGODB_URI || 'mongodb://localhost/coinHundred';
+const MONGO = process.env.MONGODB_URI || 'mongodb://localhost:27017/coinHundred';
 const app = express();
 const compiler = webpack(webpackConfig);
 app.use(devMiddleware(compiler, {
@@ -62,6 +62,7 @@ app.listen(PORT, err =>
   process.stdout.write(JSON.stringify(err, null, 2) || `
   ==> 📡  Server @ ${PORT}
 `));
-mongoose.connect(MONGO, { useMongoClient: true }, err =>
-  process.stdout.write(JSON.stringify(err) || `==> 📜  MONGO @ ${MONGO}
+mongoose.connect(MONGO, err =>
+  process.stdout.write(err ? JSON.stringify(err) : `
+  ==> 📜  MONGO @ ${MONGO}
 `));

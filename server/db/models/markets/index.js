@@ -3,13 +3,14 @@ import bittrexApi from 'node-bittrex-api';
 import mongoose from 'mongoose';
 import { Promise as bbPromise } from 'bluebird';
 import { marketsSchema } from '../../schemas/markets';
-
 import {
   _getBinancePrices,
   _getBittrexPrices,
   _cleanBinancePrices,
   _cleanBittrexPrices,
 } from './helpers';
+
+mongoose.Promise = bbPromise;
 
 bittrexApi.options({
   apikey: process.env.BITTREX_API_KEY,
@@ -22,15 +23,13 @@ marketsSchema.statics.getPrices = () => {
     _getBinancePrices(),
     _getBittrexPrices(),
   ])
-  .then((prices) => {
-    return Markets.createOrUpdateMarketDocs({
-      exchanges: {
-        binance: _cleanBinancePrices(prices[0]),
-        bittrex: _cleanBittrexPrices(prices[1].result),
-      },
-    });
-  })
-  .then(() => {
+  .then((prices) => Markets.createOrUpdateMarketDocs({
+    exchanges: {
+      binance: _cleanBinancePrices(prices[0]),
+      bittrex: _cleanBittrexPrices(prices[1].result),
+    },
+  }))
+  .then((result) => {
     console.log('success.');
   })
   .catch((err) => {
@@ -44,9 +43,10 @@ marketsSchema.statics.createMarket = marketObj =>
     if (marketObj && typeof marketObj !== 'object') reject('FAILED:  @Markets.createMarket - Must supply an {object} for param "marketObj".');
 
     bbPromise.fromCallback(cb =>
-      Markets.create({ ...marketObj.market }, cb)
+      Markets.create(marketObj, cb)
     )
     .then((newMarket) => {
+      console.log('newMarket: ', newMarket);
       if ('_id' in newMarket) resolve();
       else reject('FAILED: @func "createMarket".');
     })
@@ -58,22 +58,24 @@ marketsSchema.statics.findMarketAndUpdate = marketObj =>
     if (!('symbol' in marketObj)) reject('FAILED: @Markets.findMarketAndUpdate - Must supply required param "marketObj".');
     if (marketObj && typeof marketObj !== 'object') reject('FAILED:  @Markets.findMarketAndUpdate - Must supply an {object} for param "marketObj".');
 
-    Markets
-    .findOne({ symbol: marketObj.symbol })
-    .exec()
-    .then((dbMarket) => { // eslint-disable-line consistent-return
-      if (!('_id' in dbMarket)) {
-        reject(`FAILED: Could not find market to update: "${marketObj.symbol}"`);
-      } else {
-        dbMarket.last = marketObj.last;
-        dbMarket.timeStamp = marketObj.timeStamp;
-        dbMarket.exchange = marketObj.exchange;
+    bbPromise.fromCallback(cb =>
+      Markets
+      .findOne({ symbol: marketObj.symbol }, cb)
+      .exec()
+      .then((dbMarket) => { // eslint-disable-line consistent-return
+        if (!('_id' in dbMarket)) {
+          reject(`FAILED: Could not find market to update: "${marketObj.symbol}"`);
+        } else {
+          dbMarket.last = marketObj.last;
+          dbMarket.timeStamp = marketObj.timeStamp;
+          dbMarket.exchange = marketObj.exchange;
 
-        return dbMarket.save({ new: true });
-      }
-    })
-    .then(resolve)
-    .catch(reject);
+          return dbMarket.save({ new: true });
+        }
+      })
+      .then(resolve)
+      .catch(reject)
+    );
   });
 
 marketsSchema.statics.dbLookup = marketObj =>
@@ -81,23 +83,24 @@ marketsSchema.statics.dbLookup = marketObj =>
     if (!('symbol' in marketObj)) reject('FAILED: @Markets.dbLookup - Must supply required param "marketObj".');
     if (marketObj && typeof marketObj !== 'object') reject('FAILED:  @Markets.dbLookup - Must supply an {object} for param "marketObj".');
 
-    Markets
-    .findOne(marketObj.symbol)
-    .exec()
-    .then((dbMarket) => {
-      if ('_id' in dbMarket) {
-        resolve({
-          result: true,
-          market: { ...marketObj },
-        });
-      } else {
-        resolve({
-          result: false,
-          market: { ...marketObj },
-        });
-      }
-    })
-    .catch(reject);
+    bbPromise.fromCallback(cb =>
+      Markets
+      .findOne({ symbol: marketObj.symbol }, cb)
+      .then((dbMarket) => {
+        if (dbMarket !== null) {
+          resolve({
+            result: true,
+            market: { ...marketObj },
+          });
+        } else {
+          resolve({
+            result: false,
+            market: { ...marketObj },
+          });
+        }
+      })
+      .catch(reject)
+    )
   });
 
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
@@ -124,15 +127,14 @@ new Promise((resolve, reject) => {
     ...lookupRequests,
   ])
   .then((results) => {
+    // results = array of markets and db lookup status.
     const createOrUpdateReqs = results.map(({ result, market }) => {
       if (result) return Markets.updateMarket(market);
       return Markets.createMarket(market);
     });
     return Promise.all(createOrUpdateReqs);
   })
-  .then(() => {
-    console.log('finished updated or creating markets.');
-  })
+  .then(resolve)
   .catch(reject);
 });
 

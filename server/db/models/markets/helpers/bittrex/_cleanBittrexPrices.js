@@ -17,7 +17,7 @@ export const _cleanBittrexPrices = prices =>
         ...acc,
         [MarketName]: {
           symbol: MarketName,
-          last: Last,
+          last: String(Last),
           exchange: 'bittrex',
           timeStamp: new Date(),
         },
@@ -26,7 +26,7 @@ export const _cleanBittrexPrices = prices =>
       acc = ({
         [MarketName]: {
           symbol: MarketName,
-          last: Last,
+          last: String(Last),
           exchange: 'bittrex',
           timeStamp: new Date(),
         },
