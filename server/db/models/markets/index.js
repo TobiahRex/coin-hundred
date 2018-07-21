@@ -18,6 +18,13 @@ bittrexApi.options({
   inverse_callback_arguments: true,
 });
 
+/*
+  Parallel operation: fetches prices from both Binance and Bittrex exchanges.
+  Creates a new DB document for market if does not already exist.  If already exists
+  updates market data in DB. Returns all results.
+
+  NOTE: Long Term Outlook: This function will be used to update all market data periodically.
+*/
 marketsSchema.statics.getPrices = cb =>
   Promise.all([
     _getBinancePrices(),
@@ -42,7 +49,7 @@ marketsSchema.statics.createMarket = marketObj =>
     )
     .then((newMarket) => {
       if ('_id' in newMarket) resolve(newMarket);
-      else reject('FAILED: @func "createMarket".');
+      else reject('FAILED: @func "Markets.createMarket".');
     })
     .catch(reject);
   });
@@ -82,47 +89,49 @@ marketsSchema.statics.dbLookup = marketObj =>
       .then((dbMarket) => {
         if (dbMarket !== null) {
           resolve({
-            result: true,
+            exists: true,
             market: { ...marketObj },
           });
         } else {
           resolve({
-            result: false,
+            exists: false,
             market: { ...marketObj },
           });
         }
       })
       .catch(reject)
-    )
+    );
   });
 
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
 new Promise((resolve, reject) => {
   // iterate through bittrex & binance and check for existing documents.
   // if none is found, create a new one.
-  // if is found, update existing document's price with current price.
+  // if found, update existing document's price with current price.
 
   const lookupRequests = [];
 
+  // create lookup requests for all cached markets across all cached exchanges.
   Object
   .keys(exchanges)
-  .forEach((exchangeKey) => {
+  .forEach((exchangeKey) => {  // for each exchange
     const markets = exchanges[exchangeKey];
 
     Object
     .keys(markets)
-    .forEach((marketKey) => {
+    .forEach((marketKey) => { // iterate over each market
       lookupRequests.push(Markets.dbLookup(markets[marketKey]));
     });
   });
 
+  // linearly lookup all markets within DB.
   Promise.all([
     ...lookupRequests,
   ])
   .then((results) => {
     // results = array of markets and db lookup status.
-    const reqCollection = results.map(({ result, market }) => {
-      if (result) return Markets.updateMarket(market);
+    const reqCollection = results.map(({ exists, market }) => {
+      if (exists) return Markets.updateMarket(market);
       return Markets.createMarket(market);
     });
     return Promise.all(reqCollection);
