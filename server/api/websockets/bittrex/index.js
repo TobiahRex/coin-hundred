@@ -41,7 +41,10 @@ client.serviceHandlers.connected = () => {
     .done((auth_err, auth_result) => {
       if (auth_err) log.red('Authenticate Error: ', auth_err);
       else log.green('Authentication Successful: \n', auth_result);
-    })
+
+      client.on('c2', 'u0', helpers.cb_orderDelta);
+      client.on('c2', 'uB', helpers.cb_balanceDelta);
+    });
   });
 };
 // client.serviceHandlers.messageReceived = (message) => {
