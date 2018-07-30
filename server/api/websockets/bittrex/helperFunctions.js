@@ -305,10 +305,10 @@ const updatedBalance = __balance =>
     return key_long;
   });
 
-const onPublic = (__update) => {
+const cb_marketDelta = (__update) => {
   const raw = new Buffer.from(__update, 'base64');
 
-  zlib.bufferRaw(raw, (err, inflated) => {
+  zlib.inflateRaw(raw, (err, inflated) => {
     let obj = null;
     if (!err) {
       try {
@@ -316,17 +316,31 @@ const onPublic = (__update) => {
       } catch (e) {
         log.red('Could not parse update: ', e);
       }
+      // remap Acronym keys to Full-name keys.
+      Object.keys(obj).forEach((__key) => {
+        obj[mapKeys(__key)] = obj[__key];
+      });
 
-      if (obj.f) {
-        log.lightGray('uE update... ', JSON.stringify(obj.f, null, 2));
-      } else {
-        const currentMarket = lodash.filter(obj.D, __obj => __obj.M === market);
+      // remap 'Buys' array objects, who have acronym keys to full-name keys.
+      const newBuys = obj.Buys.reduce((acc_1, next__buy) => {
+        const newBuy = Object.keys(next__buy).reduce((acc_2, n) => {
+          acc_2[mapKeys(n)] = next__buy[n];
+          return acc_2;
+        }, {});
 
-        if (currentMarket.length > 0) {
-          const summary = summaryCurrentMarket(currentMarket[0]);
-          log.lightBlue('uS updated... \n', JSON.stringify(summary, null, 2));
-        }
-      }
+        acc_1.push(newBuy);
+        return acc_1;
+      }, []);
+      obj.Buys = [...newBuys];
+
+      console.log(JSON.stringify(obj, null, 2));
+
+      // const currentMarket = lodash.filter(obj.D, __obj => __obj.M === market);
+
+      // if (currentMarket.length > 0) {
+      //   const summary = summaryCurrentMarket(currentMarket[0]);
+      //   log.lightBlue('uS updated... \n', JSON.stringify(summary, null, 2));
+      // }
     }
   });
 };
@@ -361,6 +375,6 @@ export default ({
   symbol,
   side,
   updatedBalance,
-  onPublic,
+  cb_marketDelta,
   onPrivate,
 });

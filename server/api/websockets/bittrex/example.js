@@ -4,7 +4,7 @@ const zlib = require('zlib');
 
 const client = new signalR.client('wss://socket.bittrex.com/signalr', ['c2']);
 
-let market = 'BTC-ETH',
+let market = 'BTC-USD',
     data,
     b64,
     raw,
