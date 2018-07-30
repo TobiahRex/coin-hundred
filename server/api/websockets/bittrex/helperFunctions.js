@@ -319,19 +319,22 @@ const cb_marketDelta = (__update) => {
       // remap Acronym keys to Full-name keys.
       Object.keys(obj).forEach((__key) => {
         obj[mapKeys(__key)] = obj[__key];
+        delete obj[__key];
       });
 
       // remap 'Buys' array objects, who have acronym keys to full-name keys.
-      const newBuys = obj.Buys.reduce((acc_1, next__buy) => {
-        const newBuy = Object.keys(next__buy).reduce((acc_2, n) => {
-          acc_2[mapKeys(n)] = next__buy[n];
-          return acc_2;
+      ['Buys', 'Sells', 'Fills'].forEach((type) => {
+        if (obj[type].length) {
+          obj[type] = obj[type].map(())
+        }
+      })
+      obj.Buys = obj.Buys.map((__buy) => {
+        return Object.keys(__buy).reduce((acc, b) => {
+          acc[mapKeys(b)] = __buy[b];
+          delete __buy[b];
+          return acc;
         }, {});
-
-        acc_1.push(newBuy);
-        return acc_1;
-      }, []);
-      obj.Buys = [...newBuys];
+      });
 
       console.log(JSON.stringify(obj, null, 2));
 
