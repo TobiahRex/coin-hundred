@@ -27,9 +27,14 @@ client.serviceHandlers.connected = () => {
   .done((err_2, result) => {
     if (err_2) log.red('Market Subscription Error: ', err_2);
     if (result === true) {
-      console.log('Subscribed to ' + market);
+      log.white('Subscribed to ', market);
       client.on('c2', 'uE', helpers.cb_marketDelta);
     }
+  });
+
+  client.call('c2', 'Authenticate', apiKey, signedChallenge)
+  .done((auth_err, auth_result) => {
+    if (auth_err) log.red('auth_ERROR: ', auth_err);
   });
 };
 // client.serviceHandlers.messageReceived = (message) => {
@@ -58,28 +63,28 @@ client.serviceHandlers.onerror = (message) => {
   log.red('error: ', message);
 };
 
-// client.serviceHandlers.connected = () => {
-//   log.cyan('\n******* CONNECTED *******\n');
-//
-//   client.call('c2', 'GetAuthContext', apiKey)
-//   .done((err_1, challenge) => {
-//     if (err_1) log.red(err_1);
-//
-//     const signedChallenge = signature(apiSecret, challenge);
-//
-//     client.call('c2', 'Authenticate', apiKey, signedChallenge)
-//     .done((auth_err, auth_result) => {
-//       if (auth_err) log.red('auth_ERROR: ', auth_err);
-//       else log.yellow('auth_result: ', auth_result);
-//
-//       client.call('c2', 'SubscribeToExchangeDeltas', market)
-//       .done((err_2, result) => {
-//         if (err_2) log.red('Market Subscription Error: ', err_2);
-//         console.log('Subscribed to ' + market);
-//         if (result === true) {
-//           client.on('c2', 'uE', helpers.onPublic);
-//         }
-//       });
-//     });
-//   });
-// };
+client.serviceHandlers.connected = () => {
+  log.cyan('\n******* CONNECTED *******\n');
+
+  client.call('c2', 'GetAuthContext', apiKey)
+  .done((err_1, challenge) => {
+    if (err_1) log.red(err_1);
+
+    const signedChallenge = signature(apiSecret, challenge);
+
+    client.call('c2', 'Authenticate', apiKey, signedChallenge)
+    .done((auth_err, auth_result) => {
+      if (auth_err) log.red('auth_ERROR: ', auth_err);
+      else log.yellow('auth_result: ', auth_result);
+
+      client.call('c2', 'SubscribeToExchangeDeltas', market)
+      .done((err_2, result) => {
+        if (err_2) log.red('Market Subscription Error: ', err_2);
+        console.log('Subscribed to ' + market);
+        if (result === true) {
+          client.on('c2', 'uE', helpers.onPublic);
+        }
+      });
+    });
+  });
+};

@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, import/prefer-default-export, consistent-return, new-cap */
+/* eslint-disable camelcase, import/prefer-default-export, consistent-return, new-cap, arrow-body-style */
 
 import lodash from 'lodash';
 import zlib from 'zlib';
@@ -325,25 +325,18 @@ const cb_marketDelta = (__update) => {
       // remap 'Buys' array objects, who have acronym keys to full-name keys.
       ['Buys', 'Sells', 'Fills'].forEach((type) => {
         if (obj[type].length) {
-          obj[type] = obj[type].map(())
+          obj[type] = obj[type].map((__typeObj) => {
+            return Object.keys(__typeObj).reduce((acc, n) => {
+              acc[mapKeys(n)] = __typeObj[n];
+              delete __typeObj[n];
+              return acc;
+            }, {});
+          });
         }
-      })
-      obj.Buys = obj.Buys.map((__buy) => {
-        return Object.keys(__buy).reduce((acc, b) => {
-          acc[mapKeys(b)] = __buy[b];
-          delete __buy[b];
-          return acc;
-        }, {});
       });
 
+
       console.log(JSON.stringify(obj, null, 2));
-
-      // const currentMarket = lodash.filter(obj.D, __obj => __obj.M === market);
-
-      // if (currentMarket.length > 0) {
-      //   const summary = summaryCurrentMarket(currentMarket[0]);
-      //   log.lightBlue('uS updated... \n', JSON.stringify(summary, null, 2));
-      // }
     }
   });
 };
