@@ -9,8 +9,8 @@ import helpers from './helperFunctions';  //eslint-disable-line
 const log = require('ololog').configure({ locate: false });
 
 const client = new signalR.client('wss://socket.bittrex.com/signalr', ['c2']);
-const apiSecret = process.env.BINANCE_API_SECRET;
-const apiKey = process.env.BINANCE_API_KEY;
+const apiSecret = process.env.BITTREX_API_SECRET;
+const apiKey = process.env.BITTREX_API_KEY;
 const market = process.env.MARKET;
 
 const signature = (secretKey, challenge) => crypto
@@ -22,19 +22,26 @@ const signature = (secretKey, challenge) => crypto
 client.end();
 client.serviceHandlers.connected = () => {
   log.cyan('\n******* CONNECTED *******\n');
+  //
+  // client.call('c2', 'SubscribeToExchangeDeltas', market)
+  // .done((err_2, result) => {
+  //   if (err_2) log.red('Market Subscription Error: ', err_2);
+  //   if (result === true) {
+  //     log.white('Subscribed to ', market);
+  //     client.on('c2', 'uE', helpers.cb_marketDelta);
+  //   }
+  // });
 
-  client.call('c2', 'SubscribeToExchangeDeltas', market)
-  .done((err_2, result) => {
-    if (err_2) log.red('Market Subscription Error: ', err_2);
-    if (result === true) {
-      log.white('Subscribed to ', market);
-      client.on('c2', 'uE', helpers.cb_marketDelta);
-    }
-  });
+  client.call('c2', 'GetAuthContext', apiKey)
+  .done((auth_context_err, challenge) => {
+    if (auth_context_err) log.red('auth_ERROR: ', auth_context_err);
+    else log.yellow('challenge: ', challenge);
 
-  client.call('c2', 'Authenticate', apiKey, signedChallenge)
-  .done((auth_err, auth_result) => {
-    if (auth_err) log.red('auth_ERROR: ', auth_err);
+    client.call('c2', 'Authenticate', apiKey, signature(apiSecret, challenge))
+    .done((auth_err, auth_result) => {
+      if (auth_err) log.red('Authenticate Error: ', auth_err);
+      else log.green('Authentication Successful: \n', auth_result);
+    })
   });
 };
 // client.serviceHandlers.messageReceived = (message) => {
@@ -62,29 +69,29 @@ client.serviceHandlers.connected = () => {
 client.serviceHandlers.onerror = (message) => {
   log.red('error: ', message);
 };
-
-client.serviceHandlers.connected = () => {
-  log.cyan('\n******* CONNECTED *******\n');
-
-  client.call('c2', 'GetAuthContext', apiKey)
-  .done((err_1, challenge) => {
-    if (err_1) log.red(err_1);
-
-    const signedChallenge = signature(apiSecret, challenge);
-
-    client.call('c2', 'Authenticate', apiKey, signedChallenge)
-    .done((auth_err, auth_result) => {
-      if (auth_err) log.red('auth_ERROR: ', auth_err);
-      else log.yellow('auth_result: ', auth_result);
-
-      client.call('c2', 'SubscribeToExchangeDeltas', market)
-      .done((err_2, result) => {
-        if (err_2) log.red('Market Subscription Error: ', err_2);
-        console.log('Subscribed to ' + market);
-        if (result === true) {
-          client.on('c2', 'uE', helpers.onPublic);
-        }
-      });
-    });
-  });
-};
+//
+// client.serviceHandlers.connected = () => {
+//   log.cyan('\n******* CONNECTED *******\n');
+//
+//   client.call('c2', 'GetAuthContext', apiKey)
+//   .done((err_1, challenge) => {
+//     if (err_1) log.red(err_1);
+//
+//     const signedChallenge = signature(apiSecret, challenge);
+//
+//     client.call('c2', 'Authenticate', apiKey, signedChallenge)
+//     .done((auth_err, auth_result) => {
+//       if (auth_err) log.red('auth_ERROR: ', auth_err);
+//       else log.yellow('auth_result: ', auth_result);
+//
+//       client.call('c2', 'SubscribeToExchangeDeltas', market)
+//       .done((err_2, result) => {
+//         if (err_2) log.red('Market Subscription Error: ', err_2);
+//         console.log('Subscribed to ' + market);
+//         if (result === true) {
+//           client.on('c2', 'uE', helpers.onPublic);
+//         }
+//       });
+//     });
+//   });
+// };
