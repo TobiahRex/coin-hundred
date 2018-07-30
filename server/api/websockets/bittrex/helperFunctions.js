@@ -1,8 +1,13 @@
-/* eslint-disable camelcase, import/prefer-default-export*/
+/* eslint-disable camelcase, import/prefer-default-export, consistent-return, new-cap */
 
 import lodash from 'lodash';
+import zlib from 'zlib';
 
-export const map_keys = (__key) => {
+const log = require('ololog').configure({ locate: false });
+
+const market = process.env.MARKET;
+
+const mapKeys = (__key) => {
   const min_keys = [
     {
       key: 'A',
@@ -246,3 +251,116 @@ export const map_keys = (__key) => {
     __obj.key === __key
   )[0].val;
 };
+
+const summaryCurrentMarket = __marketSummary =>
+  lodash.mapKeys(__marketSummary, (__val, __key) => {
+    const key_long = mapKeys(__key);
+    return key_long;
+  });
+
+const symbol = (__market) => {
+  const split = __market.split('-');
+  const base = split[0];
+  const comp = split[1];
+  return `${comp}/${base}`;
+};
+
+const side = (__order_type) => {
+  if (__order_type === 'LIMIT_BUY') {
+    return 'buy';
+  } else if (__order_type === 'LIMIT_SELL') {
+    return 'sell';
+  }
+};
+
+/** Response Formatting Helper Functions */
+const updatedOrder = (__order) => {
+  const map = lodash.map([__order], (__obj) => {
+    const order = __obj.o;
+    const info = lodash.mapKeys(order, (__val, __key) => {
+      const key_long = mapKeys(__key);
+      return key_long;
+    });
+
+    return {
+      status: status(__obj.TY),
+      amount: __obj.o.Q,
+      remaining: __obj.o.q,
+      price: __obj.o.X,
+      average: __obj.o.PU,
+      uuid: __obj.o.U,
+      id: __obj.o.OU,
+      market_name: __obj.o.E,
+      symbol: symbol(__obj.o.E),
+      side: side(__obj.o.OT),
+      info,
+    };
+  });
+  return map[0];
+};
+
+const updatedBalance = __balance =>
+  lodash.mapKeys(__balance, (__val, __key) => {
+    const key_long = mapKeys(__key);
+    return key_long;
+  });
+
+const onPublic = (__update) => {
+  const raw = new Buffer.from(__update, 'base64');
+
+  zlib.bufferRaw(raw, (err, inflated) => {
+    let obj = null;
+    if (!err) {
+      try {
+        obj = JSON.parse(inflated.toString('utf8'));
+      } catch (e) {
+        log.red('Could not parse update: ', e);
+      }
+
+      if (obj.f) {
+        log.lightGray('uE update... ', JSON.stringify(obj.f, null, 2));
+      } else {
+        const currentMarket = lodash.filter(obj.D, __obj => __obj.M === market);
+
+        if (currentMarket.length > 0) {
+          const summary = summaryCurrentMarket(currentMarket[0]);
+          log.lightBlue('uS updated... \n', JSON.stringify(summary, null, 2));
+        }
+      }
+    }
+  });
+};
+
+
+const onPrivate = (__update) => {
+  const raw = new Buffer.from(__update, 'base64');
+  zlib.inflateRaw(raw, (err, inflated) => {
+    if (!err) {
+      const obj = JSON.parse(inflated.toString('utf8'));
+      if (obj.o) {
+        /** Order Updates */
+        const order = updatedOrder(obj);
+        if (order.side === 'buy') {
+          log.blue('buy_order_update', JSON.stringify(order, null, 2));
+        } else if (order.side === 'sell') {
+          log.lightRed('sell_order_update', JSON.stringify(order, null, 2));
+        }
+      } else {
+        /** Balance Updates */
+        const balance = updatedBalance(obj.d);
+        log.green('updated_balance', JSON.stringify(balance, null, 2));
+      }
+    }
+  });
+};
+
+export default ({
+  mapKeys,
+  summaryCurrentMarket,
+  updatedOrder,
+  symbol,
+  side,
+  updatedBalance,
+  onPublic,
+  onPrivate,
+});

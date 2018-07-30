@@ -7,7 +7,8 @@ const client = new signalR.client('wss://socket.bittrex.com/signalr', ['c2']);
 let market = 'BTC-ETH',
     data,
     b64,
-    raw;
+    raw,
+    json;
 
 client.serviceHandlers.connected = function (connection) {
   console.log ('connected');
@@ -18,6 +19,7 @@ client.serviceHandlers.connected = function (connection) {
     }
   });
 }
+client.end();
 client.serviceHandlers.messageReceived = (message) => {
   data = jsonic(message.utf8Data);
   if (data.hasOwnProperty('M')) {
@@ -42,4 +44,3 @@ client.serviceHandlers.messageReceived = (message) => {
     }
   }
 };
-client.end();
