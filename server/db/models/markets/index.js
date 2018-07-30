@@ -30,12 +30,14 @@ marketsSchema.statics.getPrices = cb =>
     _getBinancePrices(),
     _getBittrexPrices(),
   ])
-  .then(prices => Markets.createOrUpdateMarketDocs({
-    exchanges: {
-      binance: _cleanBinancePrices(prices[0]),
-      bittrex: _cleanBittrexPrices(prices[1].result),
-    },
-  }))
+  .then((prices) => { // eslint-disable-line
+    return Markets.createOrUpdateMarketDocs({
+      exchanges: {
+        binance: _cleanBinancePrices(prices[0]),
+        bittrex: _cleanBittrexPrices(prices[1].result),
+      },
+    });
+  })
   .then(result => cb(null, result))
   .catch(cb);
 

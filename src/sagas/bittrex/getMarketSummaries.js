@@ -3,7 +3,8 @@ import bittrexActions from '../../redux/bittrex';
 import apiActions from '../../redux/api';
 
 export default function* getMarketSummaries(api) {
-  const response = yield call(() => api.getMarketSummaries());
+  const response = yield call(() => api.getPrices());
+  // const response = yield call(() => api.getMarketSummaries());
   if (response.ok) {
     yield all([
       put(bittrexActions.receivedMarketSummaries(response.data.result)),

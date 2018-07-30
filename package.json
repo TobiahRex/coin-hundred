@@ -58,7 +58,7 @@
     "html-webpack-plugin": "^2.28.0",
     "json-loader": "^0.5.4",
     "localforage": "^1.5.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.10",
     "node-sass": "^3.10.1",
     "npm-run-all": "^3.1.0",
     "open": "0.0.5",
@@ -84,12 +84,14 @@
     "babel-preset-env": "^1.7.0",
     "bluebird": "^3.5.1",
     "express": "^4.15.3",
+    "jsonic": "^0.3.0",
     "material-ui": "^0.18.3",
     "moment": "^2.20.1",
     "mongoose": "^5.1.2",
     "morgan": "^1.8.2",
     "node-binance-api": "^0.3.0",
     "node-bittrex-api": "^0.8.1",
+    "ololog": "^1.1.110",
     "path": "^0.12.7",
     "react": "^15.5.4",
     "react-dom": "^15.3.2",
@@ -102,6 +104,8 @@
     "redux-persist": "^4.8.0",
     "redux-saga": "^0.15.3",
     "reduxsauce": "^0.5.0",
-    "standard": "^10.0.2"
+    "signalr-client": "^0.0.17",
+    "standard": "^10.0.2",
+    "zlib": "^1.0.5"
   }
 }

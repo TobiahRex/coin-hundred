@@ -18,7 +18,11 @@ function createAPI() {
   const getMarketSummaries = () =>
     api.get('api/bittrex/getMarketSummaries');
 
+  const getPrices = () =>
+    api.get('api/prices/getprices');
+
   return {
+    getPrices,
     getMarketSummaries,
   };
 }

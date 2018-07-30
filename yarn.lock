@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/node@^8.0.7":
+  version "8.10.22"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.22.tgz#c095d7c668908d48b95ae11fcc4a6d6b1c116a35"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -103,6 +107,10 @@ ansi-styles@^3.1.0:
   dependencies:
     color-convert "^1.9.0"
 
+ansicolor@^1.1.71:
+  version "1.1.76"
+  resolved "https://registry.yarnpkg.com/ansicolor/-/ansicolor-1.1.76.tgz#8525e718966afac2ecb7e0b1659e44b8b5495788"
+
 anymatch@^1.3.0:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-1.3.2.tgz#553dcb8f91e3c889845dfdba34c77721b90b9d7a"
@@ -188,6 +196,12 @@ array.prototype.find@^2.0.1:
 arrify@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
+
+as-table@^1.0.31:
+  version "1.0.36"
+  resolved "https://registry.yarnpkg.com/as-table/-/as-table-1.0.36.tgz#e38f5c85e184cd7f6efe2885d8dbc80c2b731ec4"
+  dependencies:
+    printable-characters "^1.0.37"
 
 asap@~2.0.3:
   version "2.0.6"
@@ -1826,6 +1840,12 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+data-uri-to-buffer@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-2.0.0.tgz#0ba23671727349828c32cfafddea411908d13d23"
+  dependencies:
+    "@types/node" "^8.0.7"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -2752,6 +2772,13 @@ generate-object-property@^1.1.0:
 get-caller-file@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.2.tgz#f702e63127e7e231c160a80c1554acb70d5047e5"
+
+get-source@^1.0.24:
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/get-source/-/get-source-1.0.27.tgz#b92f8b5d61607ab81826eb22edd7dea1f48708d9"
+  dependencies:
+    data-uri-to-buffer "^2.0.0"
+    source-map "^0.6.0"
 
 get-stdin@^4.0.1:
   version "4.0.1"
@@ -3691,7 +3718,7 @@ lodash@^4.0.0, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lod
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
-lodash@^4.14.0:
+lodash@^4.14.0, lodash@^4.17.10:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
@@ -4211,6 +4238,17 @@ object.omit@^2.0.0:
     for-own "^0.1.4"
     is-extendable "^0.1.1"
 
+ololog@^1.1.110:
+  version "1.1.110"
+  resolved "https://registry.yarnpkg.com/ololog/-/ololog-1.1.110.tgz#60cd10b131385e9a497167f7931e92843373b48d"
+  dependencies:
+    ansicolor "^1.1.71"
+    pipez "^1.1.8"
+    printable-characters "^1.0.38"
+    stacktracey "^1.2.96"
+    string.bullet "^1.0.11"
+    string.ify "^1.0.46"
+
 on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"
@@ -4431,6 +4469,10 @@ pinkie-promise@^2.0.0, pinkie-promise@^2.0.1:
 pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
+
+pipez@^1.1.8:
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/pipez/-/pipez-1.1.12.tgz#b359ce5401e935f129fa4a094fcde89afb8436d8"
 
 pkg-conf@^2.0.0:
   version "2.1.0"
@@ -4734,6 +4776,10 @@ pretty-error@^2.0.2:
   dependencies:
     renderkid "^2.0.1"
     utila "~0.4"
+
+printable-characters@^1.0.26, printable-characters@^1.0.28, printable-characters@^1.0.37, printable-characters@^1.0.38:
+  version "1.0.42"
+  resolved "https://registry.yarnpkg.com/printable-characters/-/printable-characters-1.0.42.tgz#3f18e977a9bd8eb37fcc4ff5659d7be90868b3d8"
 
 private@^0.1.6, private@^0.1.7, private@~0.1.5:
   version "0.1.8"
@@ -5472,7 +5518,7 @@ signal-exit@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
-signalr-client@0.0.17:
+signalr-client@0.0.17, signalr-client@^0.0.17:
   version "0.0.17"
   resolved "https://registry.yarnpkg.com/signalr-client/-/signalr-client-0.0.17.tgz#a52177f37ce248ecc87226dd103c41ff70c829b1"
   dependencies:
@@ -5546,7 +5592,7 @@ source-map@^0.4.2:
   dependencies:
     amdefine ">=0.0.4"
 
-source-map@^0.6.1, source-map@~0.6.1:
+source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
 
@@ -5587,6 +5633,13 @@ sshpk@^1.7.0:
     ecc-jsbn "~0.1.1"
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
+
+stacktracey@^1.2.96:
+  version "1.2.105"
+  resolved "https://registry.yarnpkg.com/stacktracey/-/stacktracey-1.2.105.tgz#6abf4a907c94ab25c68b35dc45bb3bea7d0e8e2f"
+  dependencies:
+    as-table "^1.0.31"
+    get-source "^1.0.24"
 
 standard-engine@~7.0.0:
   version "7.0.0"
@@ -5660,6 +5713,19 @@ string-width@^2.0.0:
   dependencies:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^4.0.0"
+
+string.bullet@^1.0.11:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/string.bullet/-/string.bullet-1.0.12.tgz#b41fc417850a57e4042bf3cf347b6eee257ee253"
+  dependencies:
+    printable-characters "^1.0.26"
+
+string.ify@^1.0.46:
+  version "1.0.49"
+  resolved "https://registry.yarnpkg.com/string.ify/-/string.ify-1.0.49.tgz#2f7dd0044278ffb42cd67a8bf64b1411a76ee303"
+  dependencies:
+    printable-characters "^1.0.28"
+    string.bullet "^1.0.11"
 
 string.prototype.padend@^3.0.0:
   version "3.0.0"
@@ -6287,3 +6353,7 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+zlib@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/zlib/-/zlib-1.0.5.tgz#6e7c972fc371c645a6afb03ab14769def114fcc0"

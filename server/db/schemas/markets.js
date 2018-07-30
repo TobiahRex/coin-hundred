@@ -6,4 +6,13 @@ export const marketsSchema = new mongoose.Schema({
   last: String,
   timeStamp: Date,
   exchange: String,
+  MarketCurrency: String,
+  BaseCurrency: String,
+  MarketCurrencyLong: String,
+  BaseCurrencyLong: String,
+  MinTradeSize: Number,
+  MarketName: String,
+  IsActive: Boolean,
+  Created: Date,
+  LogoUrl: String,
 });
