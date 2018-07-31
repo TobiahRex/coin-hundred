@@ -46,6 +46,7 @@ export const _cleanBittrexPrices = prices =>
       last: String(last),
       exchange: 'bittrex',
     };
+    if (symbol === 'BTC-USD') console.log(obj);
 
     if (symbol && last) {
       acc = ({ ...acc,

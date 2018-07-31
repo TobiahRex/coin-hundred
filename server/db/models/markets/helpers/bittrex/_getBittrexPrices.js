@@ -34,9 +34,6 @@ export const _getBittrexPrices = () =>
     .then((data) => {
       data.result = data.result
         .map((market) => {
-          console.log(marketsMemo[
-            market.MarketName.split('-')[1]
-          ].LogoUrl);
           return ({
             ...market,
             marketCurrency: marketsMemo[

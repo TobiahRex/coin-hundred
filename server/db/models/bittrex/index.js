@@ -53,9 +53,6 @@ bittrexSchema.statics.getMarketSummaries = (cb) => {
   .then((data) => {
     data.result = data.result
       .map((market) => {
-        console.log(marketsMemo[
-          market.MarketName.split('-')[1]
-        ].LogoUrl)
         return ({
           ...market,
           MarketCurrency: marketsMemo[
