@@ -373,12 +373,14 @@ const onPrivate = (__update) => {
 };
 
 const cb_orderDelta = (__update) => {
+  console.log('__update: ', __update);
   parseResponse(__update, (data) => {
     JSON.stringify(data, null, 2);
   });
 };
 
 const cb_balanceDelta = (__update) => {
+  console.log('__update: ', __update);
   parseResponse(__update, (data) => {
     JSON.stringify(data, null, 2);
   });

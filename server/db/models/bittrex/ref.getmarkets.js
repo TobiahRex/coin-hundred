@@ -8,6 +8,11 @@ export default {
   IsActive: true,
   Created: '2015-12-18T00:30:10.31',
   Notice: null,
+  PrevDay: 5.5e-7,
+  Bid: 4.9e-7,
+  Ask: 5.e-7,
+  OpenBuyOrder: 53,
+  OpenSellOrders: 641,
   IsSponsored: null,
   LogoUrl: 'https://bittrexblobstorage.blob.core.windows.net/public/43aac470-0ab8-41db-a346-f23e00c1fd01.png',
 };

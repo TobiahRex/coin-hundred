@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import mongoose from 'mongoose';
 import bittrexApi from 'node-bittrex-api';
 import { Promise as bbPromise } from 'bluebird';
@@ -15,6 +16,13 @@ const bittrexSchema = new mongoose.Schema({
   results: String,
 });
 
+/*
+  getMarketSummaries:
+  1. Fetches general info from bittrex api and caches result.
+  2. Using the cache, asks bittrex api for individual information in detailed,
+    format for each market.
+
+*/
 bittrexSchema.statics.getMarketSummaries = (cb) => {
   const marketsMemo = {};
 
@@ -35,18 +43,21 @@ bittrexSchema.statics.getMarketSummaries = (cb) => {
   })
   .then((data) => {
     data.result = data.result
-      .map(market => ({
-        ...market,
-        MarketCurrency: marketsMemo[
-          market.MarketName.split('-')[1]
-        ].MarketCurrency,
-        MarketCurrencyLong: marketsMemo[
-          market.MarketName.split('-')[1]
-        ].MarketCurrencyLong,
-        LogoUrl: marketsMemo[
-          market.MarketName.split('-')[1]
-        ].LogoUrl,
-      }));
+      .map((market) => {
+        return ({
+          ...market,
+          MarketCurrency: marketsMemo[
+            market.MarketName.split('-')[1]
+          ].MarketCurrency,
+          MarketCurrencyLong: marketsMemo[
+            market.MarketName.split('-')[1]
+          ].MarketCurrencyLong,
+          LogoUrl: marketsMemo[
+            market.MarketName.split('-')[1]
+          ].LogoUrl,
+        });
+      }
+    );
     cb(null, data);
   })
   .catch(cb);
