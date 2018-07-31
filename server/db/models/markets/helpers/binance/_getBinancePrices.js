@@ -6,12 +6,12 @@ binance.options({
   APISECRET: process.env.BINANCE_API_SECRET,
 });
 
-export const _getBinancePrices = () =>
-  new Promise((resolve) => {
-    binance.prices(resolve);
-  });
+// export const _getBinancePrices = () =>
+//   new Promise((resolve) => {
+//     binance.prices(resolve);
+//   });
 
-export const _getAll24hrChanges = () =>
+export const _getBinancePrices = () =>
   new Promise((resolve, reject) => {
     binance.prevDay(false, (err, prevDay) => {
       if (!err) {

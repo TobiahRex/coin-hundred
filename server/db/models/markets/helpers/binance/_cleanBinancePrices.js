@@ -22,13 +22,12 @@
 */
 
 export const _cleanBinancePrices = prices =>
-  Object
-  .keys(prices)
-  .map((symbol) => {
+  prices
+  .map((_priceObj) => {
     const result = [
       'ETH', 'BTC', 'BNB', 'USDT',
     ]
-    .map(major => clean(major, symbol, prices))
+    .map(major => clean(major, _priceObj.symbol, _priceObj))
     .reduce((acc, nextResult) => {
       if (nextResult) acc = nextResult;
 
@@ -71,13 +70,12 @@ export const _cleanBinancePrices = prices =>
     *
     * @return {object} - clean prices objects.
   */
-function clean(major, symbol, prices) {
+function clean(major, symbol, priceObj) {
   if (!symbol) return null;
 
   let
     cleanSymbol = '';
   const
-    price = prices[symbol],
     majorStart = symbol.indexOf(major);
 
   if (majorStart) {
@@ -92,10 +90,36 @@ function clean(major, symbol, prices) {
     return null;
   }
 
+  const {
+    priceChange,
+    priceChangePercent,
+    weightedAvgPrice,
+    prevClosePrice: prevDay,
+    lastPrice: last,
+    bidPrice: bid,
+    askPrice: ask,
+    openPrice: open,
+    highPrice: high,
+    lowPrice: low,
+    volume,
+    quoteVolume: baseVolume,
+  } = priceObj;
+
   return ({
     symbol: cleanSymbol,
-    last: price,
-    exchange: 'binance',
     timeStamp: new Date(),
+    volume,
+    baseVolume,
+    open,
+    high,
+    low,
+    prevDay,
+    bid,
+    ask,
+    last,
+    exchange: 'binance',
+    priceChange,
+    priceChangePercent,
+    weightedAvgPrice,
   });
 }
