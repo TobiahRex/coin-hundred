@@ -36,7 +36,7 @@ export const _cleanBinancePrices = prices =>
     }, {});
     return result;
   })
-  .reduce((acc, nextPriceObj, i) => {
+  .reduce((acc, nextPriceObj) => {
     if (Object.keys(acc).length) {
       acc = ({
         ...acc,

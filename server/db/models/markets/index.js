@@ -20,7 +20,7 @@ bittrexApi.options({
 
 /*
   Parallel operation: fetches prices from both Binance and Bittrex exchanges.
-  Creates a new DB document for market if does not already exist.  If already exists
+  Creates a new DB document for each market if does not already exist.  If already exists
   updates market data in DB. Returns all results.
 
   NOTE: Long Term Outlook: This function will be used to update all market data periodically.

@@ -11,26 +11,50 @@
 */
 
 export const _cleanBittrexPrices = prices =>
-  prices.reduce((acc, { MarketName, Last }) => {
-    if (MarketName && Last) {
-      acc = ({
-        ...acc,
-        [MarketName]: {
-          symbol: MarketName,
-          last: String(Last),
-          exchange: 'bittrex',
-          timeStamp: new Date(),
-        },
+  prices.reduce((acc, {
+    MarketName: symbol,
+    Last: last,
+    High: high,
+    Lo: lo,
+    Bid: bid,
+    Ask: ask,
+    Volume: volume,
+    BaseVoluem: baseVolume,
+    TimeStamp: timeStamp,
+    OpenBuyOrders: openBuyOrders,
+    OpenSellOrders: openSellOrders,
+    PrevDay: prevDay,
+    Created: created,
+    MarketCurrency: marketCurrency,
+    MarketCurrencyLong: marketCurrencyLong,
+    LogoUrl: logoUrl,
+  }) => {
+    const obj = {
+      symbol,
+      timeStamp,
+      high,
+      lo,
+      bid,
+      ask,
+      volume,
+      baseVolume,
+      openBuyOrders,
+      openSellOrders,
+      prevDay,
+      created,
+      marketCurrency,
+      marketCurrencyLong,
+      logoUrl,
+      last: String(last),
+      exchange: 'bittrex',
+    };
+
+    if (symbol && last) {
+      acc = ({ ...acc,
+        [symbol]: { ...obj },
       });
     } else {
-      acc = ({
-        [MarketName]: {
-          symbol: MarketName,
-          last: String(Last),
-          exchange: 'bittrex',
-          timeStamp: new Date(),
-        },
-      });
+      acc = ({ [symbol]: { ...obj } });
     }
     return acc;
   }, {});

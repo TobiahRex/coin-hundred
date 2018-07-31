@@ -24,12 +24,13 @@ const bittrexSchema = new mongoose.Schema({
   3. Creates an updated marketSummary object combining new api response with cached response.
 
   bittrex                    server
+    | <----- get all  <-------- |
+    | ----- all markets ------> | cache response.  Then for each cached market...Request detailed information.
+    |<---get 1 market's info----| <request
     |                           |
-    | ----- all markets ------> | cache response.  Then for each cached market...
-    |<---get 1 market's info----| Request detailed information.
     |                           |
-    |                           |
-    |--> detailed mark. info--> | combine respone to cache.
+    |--> detailed mark. info--> | combine response with cache.
+    |                           | deliver cache to caller.
 */
 bittrexSchema.statics.getMarketSummaries = (cb) => {
   const marketsMemo = {};
