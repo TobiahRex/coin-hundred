@@ -1,5 +1,6 @@
 /* eslint-disable import/newline-after-import, import/imports-first*/
 require('dotenv').config({ silent: true });
+console.clear(); // eslint-disable-line
 
 import express from 'express';
 import path from 'path';
@@ -7,6 +8,7 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import webpack from 'webpack';
+import readline from 'readline';
 import hotMiddleware from 'webpack-hot-middleware';
 import devMiddleware from 'webpack-dev-middleware';
 import webpackConfig from '../webpack.config';
@@ -42,6 +44,7 @@ app.use((req, res, next) => {
         ${err}
       `);
     } else {
+      readline.clearLine(process.stdout, 0);
       process.stdout.write(`
         Response Data: 😎
 

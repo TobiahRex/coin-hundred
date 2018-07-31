@@ -13,7 +13,7 @@ binance.options({
 
 export const _getBinancePrices = () =>
   new Promise((resolve, reject) => {
-    binance.prevDay(false, (err, prevDay) => {
+    binance.prevDay(false, (prevDay, err) => {
       if (!err) {
         resolve(prevDay);
       } else {

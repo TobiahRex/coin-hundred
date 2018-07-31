@@ -10,7 +10,48 @@ bittrexApi.options({
 
 export const _getBittrexPrices = () =>
   new Promise((resolve, reject) => {
-    bbPromise.fromCallback(cb => bittrexApi.getmarketsummaries(cb))
-    .then(resolve)
+    // bbPromise.fromCallback(cb => bittrexApi.getmarketsummaries(cb))
+    // .then(resolve)
+    // .catch(reject);
+
+    const marketsMemo = {};
+
+    bbPromise.fromCallback(cb => bittrexApi.getmarkets(cb))
+    .then((data) => {
+      data.result.forEach(({
+        MarketCurrency,
+        MarketCurrencyLong,
+        LogoUrl,
+      }) => {
+        marketsMemo[MarketCurrency] = {
+          LogoUrl,
+          MarketCurrency,
+          MarketCurrencyLong,
+        };
+      });
+      return bbPromise.fromCallback(cb3 => bittrexApi.getmarketsummaries(cb3));
+    })
+    .then((data) => {
+      data.result = data.result
+        .map((market) => {
+          console.log(marketsMemo[
+            market.MarketName.split('-')[1]
+          ].LogoUrl);
+          return ({
+            ...market,
+            marketCurrency: marketsMemo[
+              market.MarketName.split('-')[1]
+            ].MarketCurrency,
+            marketCurrencyLong: marketsMemo[
+              market.MarketName.split('-')[1]
+            ].MarketCurrencyLong,
+            logoUrl: marketsMemo[
+              market.MarketName.split('-')[1]
+            ].LogoUrl,
+          });
+        }
+      );
+      resolve(data);
+    })
     .catch(reject);
   });

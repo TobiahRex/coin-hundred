@@ -24,9 +24,9 @@ export const _cleanBittrexPrices = prices =>
     OpenBuyOrders: openBuyOrders,
     OpenSellOrders: openSellOrders,
     PrevDay: prevDay,
-    MarketCurrency: marketCurrency,
-    MarketCurrencyLong: marketCurrencyLong,
-    LogoUrl: logoUrl,
+    marketCurrency,
+    marketCurrencyLong,
+    logoUrl,
   }) => {
     const obj = {
       symbol,

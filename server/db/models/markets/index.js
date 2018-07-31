@@ -1,4 +1,4 @@
-/* eslint-disable import/prefer-default-export, no-use-before-define */
+/* eslint-disable import/prefer-default-export, no-use-before-define, indent */
 import bittrexApi from 'node-bittrex-api';
 import mongoose from 'mongoose';
 import { Promise as bbPromise } from 'bluebird';
@@ -106,7 +106,7 @@ marketsSchema.statics.dbLookup = marketObj =>
   });
 
 marketsSchema.statics.createOrUpdateMarketDocs = ({ exchanges }) =>
-new Promise((resolve, reject) => {
+  new Promise((resolve, reject) => {
   // iterate through bittrex & binance and check for existing documents.
   // if none is found, create a new one.
   // if found, update existing document's price with current price.
@@ -140,6 +140,6 @@ new Promise((resolve, reject) => {
   })
   .then(resolve)
   .catch(reject);
-});
+  });
 
 export const Markets = mongoose.model('Markets', marketsSchema);
