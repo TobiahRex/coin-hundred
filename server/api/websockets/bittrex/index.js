@@ -1,16 +1,14 @@
 /* eslint-disable new-cap, camelcase, consistent-return */
-require('dotenv').config({ silent: true });
 
+// import crypto from 'crypto';
+// import zlib from 'zlib';
+// import jsonic from 'jsonic';
 import signalR from 'signalr-client';
-import crypto from 'crypto';
-import zlib from 'zlib';
-import jsonic from 'jsonic';
 import helpers from './helperFunctions';  //eslint-disable-line
 const log = require('ololog').configure({ locate: false });
+require('dotenv').config({ silent: true });
 
 const client = new signalR.client('wss://socket.bittrex.com/signalr', ['c2']);
-const apiSecret = process.env.BITTREX_API_SECRET;
-const apiKey = process.env.BITTREX_API_KEY;
 const market = process.env.MARKET;
 
 // Websocket Client Connect
@@ -18,31 +16,7 @@ client.end();
 client.serviceHandlers.connected = () => {
   log.cyan('\n******* CONNECTED *******\n');
   helpers.subscribeToAccount(client);
-  helpers.subscribeToMarket(client, market);
-  //
-  // client.call('c2', 'SubscribeToExchangeDeltas', market)
-  // .done((err_2, result) => {
-  //   if (err_2) log.red('Market Subscription Error: ', err_2);
-  //   if (result === true) {
-  //     log.white('Subscribed to ', market);
-  //     client.on('c2', 'uE', helpers.cb_marketDelta);
-  //   }
-  // });
-
-  client.call('c2', 'GetAuthContext', apiKey)
-  .done((auth_context_err, challenge) => {
-    if (auth_context_err) log.red('auth_ERROR: ', auth_context_err);
-    else log.yellow('challenge: ', challenge);
-
-    client.call('c2', 'Authenticate', apiKey, signature(apiSecret, challenge))
-    .done((auth_err, auth_result) => {
-      if (auth_err) log.red('Authenticate Error: ', auth_err);
-      else log.green('Authentication Successful: \n', auth_result);
-
-      client.on('c2', 'u0', helpers.cb_orderDelta);
-      client.on('c2', 'uB', helpers.cb_balanceDelta);
-    });
-  });
+  // helpers.subscribeToMarket(client, market);
 };
 // client.serviceHandlers.messageReceived = (message) => {
 //   const data = jsonic(message.utf8Data);

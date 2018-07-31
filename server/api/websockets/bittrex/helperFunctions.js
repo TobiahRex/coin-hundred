@@ -1,6 +1,7 @@
 /* eslint-disable camelcase, import/prefer-default-export, consistent-return, new-cap, arrow-body-style */
 
 import lodash from 'lodash';
+import crypto from 'crypto';
 import zlib from 'zlib'; // eslint-disable-line
 const log = require('ololog').configure({ locate: false });
 
@@ -383,16 +384,27 @@ const cb_balanceDelta = (__update) => {
   });
 };
 
+const subscribeToMarket = (_client, _market) => {
+  _client.call('c2', 'SubscribeToExchangeDeltas', _market)
+  .done((err_2, result) => {
+    if (err_2) log.red('Market Subscription Error: ', err_2);
+    if (result === true) {
+      log.white('Subscribed to ', _market);
+      _client.on('c2', 'uE', cb_marketDelta);
+    }
+  });
+};
+
 const subscribeToAccount = (_client) => {
   _client.call('c2', 'GetAuthContext', apiKey)
   .done((auth_context_err, challenge) => {
     if (auth_context_err) log.red('auth_ERROR: ', auth_context_err);
-    else log.yellow('challenge: ', challenge);
+    else log.yellow('Received Challenge: ', challenge);
 
     _client.call('c2', 'Authenticate', apiKey, signature(apiSecret, challenge))
     .done((auth_err, auth_result) => {
       if (auth_err) log.red('Authenticate Error: ', auth_err);
-      else log.green('Authentication Successful: \n', auth_result);
+      else log.green('Subscribed to Account: ', auth_result);
 
       _client.on('c2', 'uB', cb_balanceDelta);
       _client.on('c2', 'u0', cb_orderDelta);
@@ -410,4 +422,5 @@ export default ({
   cb_marketDelta,
   onPrivate,
   subscribeToAccount,
+  subscribeToMarket,
 });
