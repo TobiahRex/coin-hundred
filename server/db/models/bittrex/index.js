@@ -21,7 +21,15 @@ const bittrexSchema = new mongoose.Schema({
   1. Fetches general info from bittrex api and caches result.
   2. Using the cache, asks bittrex api for individual information in detailed,
     format for each market.
+  3. Creates an updated marketSummary object combining new api response with cached response.
 
+  bittrex                    server
+    |                           |
+    | ----- all markets ------> | cache response.  Then for each cached market...
+    |<---get 1 market's info----| Request detailed information.
+    |                           |
+    |                           |
+    |--> detailed mark. info--> | combine respone to cache.
 */
 bittrexSchema.statics.getMarketSummaries = (cb) => {
   const marketsMemo = {};
