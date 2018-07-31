@@ -1,11 +1,12 @@
 /* eslint-disable camelcase, import/prefer-default-export, consistent-return, new-cap, arrow-body-style */
 
 import lodash from 'lodash';
-import zlib from 'zlib';
-
+import zlib from 'zlib'; // eslint-disable-line
 const log = require('ololog').configure({ locate: false });
 
-const market = process.env.MARKET;
+const apiSecret = process.env.BITTREX_API_SECRET;
+const apiKey = process.env.BITTREX_API_KEY;
+// const market = process.env.MARKET;
 
 const mapKeys = (__key) => {
   const min_keys = [
@@ -252,6 +253,25 @@ const mapKeys = (__key) => {
   )[0].val;
 };
 
+const signature = (secretKey, challenge) => crypto
+    .createHmac('sha512', secretKey)
+    .update(challenge)
+    .digest('hex');
+
+const parseResponse = (__update, cb) => {
+  const raw = new Buffer.from(__update, 'base64');
+  zlib.inflateRaw(raw, (err, inflated) => {
+    if (err) log.red('Parse Error at ZLIB: ', err);
+    else {
+      try {
+        cb(JSON.parse(inflated.toString('utf8')));
+      } catch (e) {
+        log.red('Could not parse update: ', e);
+      }
+    }
+  });
+};
+
 const summaryCurrentMarket = __marketSummary =>
   lodash.mapKeys(__marketSummary, (__val, __key) => {
     const key_long = mapKeys(__key);
@@ -306,41 +326,28 @@ const updatedBalance = __balance =>
   });
 
 const cb_marketDelta = (__update) => {
-  const raw = new Buffer.from(__update, 'base64');
+  parseResponse(__update, (data) => {
+    // remap Acronym keys to Full-name keys.
+    Object.keys(data).forEach((__key) => {
+      data[mapKeys(__key)] = data[__key];
+      delete data[__key];
+    });
 
-  zlib.inflateRaw(raw, (err, inflated) => {
-    let obj = null;
-    if (!err) {
-      try {
-        obj = JSON.parse(inflated.toString('utf8'));
-      } catch (e) {
-        log.red('Could not parse update: ', e);
+    // remap 'Buys' array objects, who have acronym keys to full-name keys.
+    ['Buys', 'Sells', 'Fills'].forEach((type) => {
+      if (data[type].length) {
+        data[type] = data[type].map((__typeObj) => {
+          return Object.keys(__typeObj).reduce((acc, n) => {
+            acc[mapKeys(n)] = __typeObj[n];
+            delete __typeObj[n];
+            return acc;
+          }, {});
+        });
       }
-      // remap Acronym keys to Full-name keys.
-      Object.keys(obj).forEach((__key) => {
-        obj[mapKeys(__key)] = obj[__key];
-        delete obj[__key];
-      });
-
-      // remap 'Buys' array objects, who have acronym keys to full-name keys.
-      ['Buys', 'Sells', 'Fills'].forEach((type) => {
-        if (obj[type].length) {
-          obj[type] = obj[type].map((__typeObj) => {
-            return Object.keys(__typeObj).reduce((acc, n) => {
-              acc[mapKeys(n)] = __typeObj[n];
-              delete __typeObj[n];
-              return acc;
-            }, {});
-          });
-        }
-      });
-
-
-      console.log(JSON.stringify(obj, null, 2));
-    }
+    });
+    console.log(JSON.stringify(data, null, 2));
   });
 };
-
 
 const onPrivate = (__update) => {
   const raw = new Buffer.from(__update, 'base64');
@@ -364,6 +371,35 @@ const onPrivate = (__update) => {
   });
 };
 
+const cb_orderDelta = (__update) => {
+  parseResponse(__update, (data) => {
+    JSON.stringify(data, null, 2);
+  });
+};
+
+const cb_balanceDelta = (__update) => {
+  parseResponse(__update, (data) => {
+    JSON.stringify(data, null, 2);
+  });
+};
+
+const subscribeToAccount = (_client) => {
+  _client.call('c2', 'GetAuthContext', apiKey)
+  .done((auth_context_err, challenge) => {
+    if (auth_context_err) log.red('auth_ERROR: ', auth_context_err);
+    else log.yellow('challenge: ', challenge);
+
+    _client.call('c2', 'Authenticate', apiKey, signature(apiSecret, challenge))
+    .done((auth_err, auth_result) => {
+      if (auth_err) log.red('Authenticate Error: ', auth_err);
+      else log.green('Authentication Successful: \n', auth_result);
+
+      _client.on('c2', 'uB', cb_balanceDelta);
+      _client.on('c2', 'u0', cb_orderDelta);
+    });
+  });
+};
+
 export default ({
   mapKeys,
   summaryCurrentMarket,
@@ -373,4 +409,5 @@ export default ({
   updatedBalance,
   cb_marketDelta,
   onPrivate,
+  subscribeToAccount,
 });

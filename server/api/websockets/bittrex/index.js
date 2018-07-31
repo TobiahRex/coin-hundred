@@ -13,15 +13,12 @@ const apiSecret = process.env.BITTREX_API_SECRET;
 const apiKey = process.env.BITTREX_API_KEY;
 const market = process.env.MARKET;
 
-const signature = (secretKey, challenge) => crypto
-    .createHmac('sha512', secretKey)
-    .update(challenge)
-    .digest('hex');
-
 // Websocket Client Connect
 client.end();
 client.serviceHandlers.connected = () => {
   log.cyan('\n******* CONNECTED *******\n');
+  helpers.subscribeToAccount(client);
+  helpers.subscribeToMarket(client, market);
   //
   // client.call('c2', 'SubscribeToExchangeDeltas', market)
   // .done((err_2, result) => {
