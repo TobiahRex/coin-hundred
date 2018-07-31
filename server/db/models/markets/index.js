@@ -118,7 +118,7 @@ new Promise((resolve, reject) => {
   .keys(exchanges)
   .forEach((exchangeKey) => {  // for each exchange
     const markets = exchanges[exchangeKey];
-
+    
     Object
     .keys(markets)
     .forEach((marketKey) => { // iterate over each market
